@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import system.Config;
 
 /**
  *
@@ -58,19 +59,17 @@ public class Process extends javax.swing.JFrame {
                                break;
                            }                           
                         }
-
                     }else if(re == 1){
                         int numBlocks = OtherPeers.get(i).getNumberOfBlocksFromOtherPeer();
                         if(numBlocks > 0){
+                            blocks = new Block[numBlocks];
                             for(int j=currentIndex; j<numBlocks;j++){
+                                blocks[j]=  OtherPeers.get(i).getBlockFromOtherPeers(j);
                                 double value = ((j+1)*1.0*100)/numBlocks;
                                 int k = (int) value;
                                 processDownloadBlockChain.setValue(k);
                                 currentIndex++;
                             }
-                            this.dispose();
-                            Index indexGui = new Index();
-                            indexGui.setVisible(true);
                             break;
                         }                        
                         break;
@@ -80,10 +79,13 @@ public class Process extends javax.swing.JFrame {
                 
             }
         }
-        if(hf.WriteFileBlockchain(blocks, LocationSaveBlockchain)){
-            this.dispose();
-            Index indexGui = new Index();
-            indexGui.setVisible(true);             
+        if(hf.WriteFileBlockchain(blocks, LocationSaveBlockchain) && hf.WriteBlockToFileTopBlock(blocks[blocks.length-1], LocationSaveBlockchain)){
+            if(hf.ReadFileConfig()){
+                Config newConfig = hf.getConfig();
+                newConfig.setIsBlockchainReady(true);
+                hf.WriteFileConfig(newConfig);
+            }
+            btnNext.setEnabled(true);        
         }else{
             JOptionPane.showMessageDialog(null,"Đã xãy ra lỗi lưu trữ!","Lỗi!",JOptionPane.ERROR_MESSAGE);
         }
@@ -100,7 +102,7 @@ public class Process extends javax.swing.JFrame {
 
         processDownloadBlockChain = new javax.swing.JProgressBar();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnNext = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
 
@@ -110,8 +112,14 @@ public class Process extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
         jLabel1.setText("Đang tải bản sao của Blockchain");
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton1.setText("Next >>");
+        btnNext.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnNext.setText("Next >>");
+        btnNext.setEnabled(false);
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jButton2.setText("<< Back");
@@ -131,7 +139,7 @@ public class Process extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addGap(86, 86, 86)
-                .addComponent(jButton1)
+                .addComponent(btnNext)
                 .addGap(84, 84, 84)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(137, 137, 137))
@@ -146,7 +154,7 @@ public class Process extends javax.swing.JFrame {
                 .addComponent(processDownloadBlockChain, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(btnNext)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
                 .addGap(48, 48, 48))
@@ -155,6 +163,12 @@ public class Process extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        // TODO add your handling code here:
+            this.setVisible(false);
+            this.dispose();
+    }//GEN-LAST:event_btnNextActionPerformed
 
     /**
      * @param args the command line arguments
@@ -192,7 +206,7 @@ public class Process extends javax.swing.JFrame {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnNext;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;

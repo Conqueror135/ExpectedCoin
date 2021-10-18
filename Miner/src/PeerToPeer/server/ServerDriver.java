@@ -17,9 +17,9 @@ import java.util.ArrayList;
  * @author Admin
  */
 public class ServerDriver extends Thread{
-    ImpServer server;
-    ArrayList<ImpClient> peers;
-    ArrayList<String> otherPeers;
+    private ImpServer server;
+    private ArrayList<ImpClient> peers;
+    private ArrayList<String> otherPeers;
     public ServerDriver(ArrayList<ImpClient> peers, ArrayList<String> otherPeers) {
         this.peers = peers;
         this.otherPeers=otherPeers;
@@ -36,5 +36,10 @@ public class ServerDriver extends Thread{
             System.out.println("Your server is already!");
         } catch (RemoteException | MalformedURLException e) {
 	}
-    }         
+    }
+
+    public ImpServer getServer() {
+    //    System.out.println("Seve" + this.server.getTopBlock().getNonce());
+        return this.server;
+    }
 }

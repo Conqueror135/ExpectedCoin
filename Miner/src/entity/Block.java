@@ -13,33 +13,64 @@ import java.io.Serializable;
  */
 public class Block implements Serializable{
     //--Header
-    private String Height;
+    private String Index;
     private String PreviousHeaderHash;
     private String Timestamp;
     private String MerkleRootHash;
     private String Nonce;
+    private int Confirmations;
+    private String Miner; 
+    private Core core;
     //- end
     private String HeaderHash;
     private Transaction[] Trans;
-    private int Confirmations;
-    private String Miner;
-    private Core core;
 
-    public Block(String Height, String PreviousHeaderHash, String Timestamp, String MerkleRootHash, String Nonce, String HeaderHash, Transaction[] Trans, int Confirmations, String Miner, Core core) {
-        this.Height = Height;
+
+    public void setIndex(String Index) {
+        this.Index = Index;
+    }
+    // Setter
+    public void setPreviousHeaderHash(String PreviousHeaderHash) {
         this.PreviousHeaderHash = PreviousHeaderHash;
+    }
+
+    public void setTimestamp(String Timestamp) {
         this.Timestamp = Timestamp;
+    }
+
+    public void setMerkleRootHash(String MerkleRootHash) {
         this.MerkleRootHash = MerkleRootHash;
+    }
+
+    public void setNonce(String Nonce) {
         this.Nonce = Nonce;
+    }
+
+    public void setHeaderHash(String HeaderHash) {
         this.HeaderHash = HeaderHash;
+    }
+
+    public void setTrans(Transaction[] Trans) {
         this.Trans = Trans;
+    }
+
+    public void setConfirmations(int Confirmations) {
         this.Confirmations = Confirmations;
+    }
+
+    public void setMiner(String Miner) {
         this.Miner = Miner;
+    }
+
+    public void setCore(Core core) {
         this.core = core;
     }
+    public Block(){
+        
+    }
     // Getter
-    public String getHeight() {
-        return Height;
+    public String getIndex() {
+        return Index;
     }
 
     public String getPreviousHeaderHash() {

@@ -39,5 +39,9 @@ public class Config implements Serializable {
     public boolean isIsBlockchainReady() {
         return IsBlockchainReady;
     }
+
+    public void setIsBlockchainReady(boolean IsBlockchainReady) {
+        this.IsBlockchainReady = IsBlockchainReady;
+    }
     
 }

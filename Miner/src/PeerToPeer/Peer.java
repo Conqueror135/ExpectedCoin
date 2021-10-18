@@ -7,6 +7,7 @@ package PeerToPeer;
 
 import PeerToPeer.client.ImpClient;
 import PeerToPeer.client.PeerScanner;
+import PeerToPeer.server.ImpServer;
 import PeerToPeer.server.ServerDriver;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class Peer {
         return otherPeers;
     }
 
-    public ServerDriver getServer() {
-        return server;
+    public ImpServer getServer() {
+        return this.server.getServer();
     }
 }

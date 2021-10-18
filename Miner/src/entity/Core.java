@@ -5,11 +5,13 @@
  */
 package entity;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Admin
  */
-public class Core {
+public class Core implements Serializable  {
     private String SystemAddress; // Địa chỉ ví của hệ thống
     private double TotalCoin; // so luong coin co trong he thong con co the thuong cho tho dao// tong so luonng coin co trong he thong la  
     private int Difficult;// so luong so 0 yeu cau cua ma bam
@@ -23,4 +25,31 @@ public class Core {
         this.Reward = Reward;
         this.halving = halving;
     }  
+
+    public String getSystemAddress() {
+        return SystemAddress;
+    }
+
+    public double getTotalCoin() {
+        return TotalCoin;
+    }
+
+    public int getDifficult() {
+        return Difficult;
+    }
+
+    public double getReward() {
+        return Reward;
+    }
+
+    public double getFloorFeeReward() {
+        return FloorFeeReward;
+    }
+
+    public int getHalving() {
+        return halving;
+    }
+    public String toString(){
+        return SystemAddress+"_"+String.valueOf(TotalCoin)+"_"+String.valueOf(Difficult)+"_"+String.valueOf(Reward)+"_"+String.valueOf(FloorFeeReward)+"_"+String.valueOf(halving);
+    }
 }

@@ -237,13 +237,17 @@ public class InitialSetting extends javax.swing.JFrame {
         }
         else if(LocationSaveBlockchain.equals("")==false && AddressWallet.equals("")== false){
             if(hf.createNewFolder(LocationSaveBlockchain+"\\EPC"))
+                if(hf.createNewFile(LocationSaveBlockchain+"\\EPC\\TopBlock.bin")){
+                    
+                }
                 if(hf.createNewFile(LocationSaveBlockchain+"\\EPC\\Blocks.bin"))
                     if(hf.createNewFolder("D:/ExpectedCoinMiner")){// tao foder ExpectedCoinMiner trong o C
-                        Config config = new Config(LocationSaveBlockchain+"\\EPC\\Blocks.bin", AddressWallet, Password, false);
+                        Config config = new Config(LocationSaveBlockchain+"\\EPC\\", AddressWallet, Password, false);
                         if(hf.WriteFileConfig(config)){
                             this.dispose();
-                            Process process = new Process(OtherPeers, LocationSaveBlockchain+"\\EPC\\Blocks.bin");
+                            Process process = new Process(OtherPeers, LocationSaveBlockchain+"\\EPC\\");
                             process.setVisible(true);
+                            
                         }
                     }else{
 

@@ -27,16 +27,13 @@ public class HandlerFile {
 
     private Config config;
     private Block[] blocks;
+    private Block TopBlock;
     public HandlerFile() {
     }
     
     public boolean createNewFolder(String path){
         File dir = new File(path);
-        if (dir.mkdirs()) {
-            return true;
-        }else{
-            return false;
-        }     
+        return dir.mkdirs();
     }
     public boolean createNewFile(String path){
         try {
@@ -58,85 +55,104 @@ public class HandlerFile {
     
     public boolean  ReadFileConfig(){
         try {
-          //Bước 1: Tạo đối tượng luồng và liên kết nguồn dữ liệu
-          FileInputStream fis = new FileInputStream("D:\\ExpectedCoinMiner\\config.bin");
-          ObjectInputStream ois = new ObjectInputStream(fis);
-          //Bước 2: Đọc dữ liệu
-          config = (Config) ois.readObject();
-          fis.close();
+            ObjectInputStream ois;
+            try (FileInputStream fis = new FileInputStream("D:\\ExpectedCoinMiner\\config.bin")) {
+                ois = new ObjectInputStream(fis);
+                //Bước 2: Đọc dữ liệu
+                config = (Config) ois.readObject();
+            }
           ois.close();
           return true;
-        } catch (Exception ex) {
+        } catch (IOException | ClassNotFoundException ex) {
           return false;
        } 
     }
     public boolean WriteFileConfig(Config config){
         try {
-            //Bước 1: Tạo đối tượng luồng và liên kết nguồn dữ liệu
-            FileOutputStream fos = new FileOutputStream("D:\\ExpectedCoinMiner\\config.bin");
+            ObjectOutputStream oos;
             //out = Files.newOutputStream(path, CREATE, APPEND);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            // Ghi dối tượng config vào file
-            oos.writeObject(config);
-            // Đóng luồng
-            fos.close();
+            try (FileOutputStream fos = new FileOutputStream("D:\\ExpectedCoinMiner\\config.bin")) {
+                //out = Files.newOutputStream(path, CREATE, APPEND);
+                oos = new ObjectOutputStream(fos);
+                // Ghi dối tượng config vào file
+                oos.writeObject(config);
+                // Đóng luồng
+            }
             oos.close();
             return true;
         } catch (IOException ex) {
             return false;
         }        
     }
-    public Config getConfig() {
-        return config;
-    }
     public boolean WriteFileBlockchain(Block[] blocks, String place){
         try {
-            //Bước 1: Tạo đối tượng luồng và liên kết nguồn dữ liệu
-            FileOutputStream fos = new FileOutputStream(place);
+            ObjectOutputStream oos;
             //out = Files.newOutputStream(path, CREATE, APPEND);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(blocks);
-            //Bước 3: Đóng luồng
-            fos.close();
+            try (FileOutputStream fos = new FileOutputStream(place+"Blocks.bin")) {
+                //out = Files.newOutputStream(path, CREATE, APPEND);
+                oos = new ObjectOutputStream(fos);
+                oos.writeObject(blocks);
+                //Bước 3: Đóng luồng
+            }
             oos.close();
             return true;
        } catch (IOException ex) {
+            System.out.println(ex);
          return false;
        }        
     }
-    public boolean WriteBlockToFileBlockchain(Block block, String place){
+    public boolean WriteBlockToFileTopBlock(Block block, String place){
         try {
-            //Bước 1: Tạo đối tượng luồng và liên kết nguồn dữ liệu
-            FileOutputStream fos = new FileOutputStream(place,true);
+            ObjectOutputStream oos;
             //out = Files.newOutputStream(path, CREATE, APPEND);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(block);
-            //Bước 3: Đóng luồng
-            fos.close();
+            try (FileOutputStream fos = new FileOutputStream(place+"TopBlock.bin")) {
+                //out = Files.newOutputStream(path, CREATE, APPEND);
+                oos = new ObjectOutputStream(fos);
+                oos.writeObject(block);
+                //Bước 3: Đóng luồng
+            }
             oos.close();
             return true;
        } catch (IOException ex) {
          return false;
        }        
     }    
-    public boolean ReadFileBlockChain(String place){
+    public boolean ReadBlockFromFileTopBlock(String place){
         try {
-            //Bước 1: Tạo đối tượng luồng và liên kết nguồn dữ liệu
-            FileInputStream fis = new FileInputStream(place);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-
-            blocks = (Block[]) ois.readObject();
-            fis.close();
+            ObjectInputStream ois;
+            try (FileInputStream fis = new FileInputStream(place+"TopBlock.bin")) {
+                ois = new ObjectInputStream(fis);
+                TopBlock =  (Block) ois.readObject();
+            }
             ois.close();
             return true;
-        } catch (Exception ex) {
+        } catch (IOException | ClassNotFoundException ex) {
+            return false;
+        }          
+    }
+            
+    public boolean ReadFileBlockChain(String place){
+        try {
+            ObjectInputStream ois;
+            try (FileInputStream fis = new FileInputStream(place+"Blocks.bin")) {
+                ois = new ObjectInputStream(fis);
+                blocks = (Block[]) ois.readObject();
+            }
+            ois.close();
+            return true;
+        } catch (IOException | ClassNotFoundException ex) {
             return false;
         }               
     }
     public Block[] getBlocks() {
         return blocks;
+    }
+    public Config getConfig() {
+        return config;
+    }
+
+    public Block getTopBlock() {
+        return TopBlock;
     }
     
 }

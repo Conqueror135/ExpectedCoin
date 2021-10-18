@@ -23,9 +23,10 @@ public interface IServer extends Remote{
     public Block getBlock(int index)throws RemoteException; // lay 1 block cu the theo thu tu
     public ArrayList<Block> getBlocks(int begin, int end) throws RemoteException; // lay nhieu block
     public int GetStatusDataBlockchain() throws RemoteException; // lay trang thai cua server
-    public boolean getBlockFromFile() throws RemoteException; // yeu cau server lay du lieu blockchain dua vao bo nho nhanh
+    public  boolean getBlockFromFile() throws RemoteException; // yeu cau server lay du lieu blockchain dua vao bo nho nhanh
     public void setIsReadyToDownloadBlocks() throws RemoteException;
     public void setIsHandlingGetBlocks() throws RemoteException;
     public int getNumberOfBlocks() throws RemoteException; // lay so luong cua cac block trong blockchain
+    public boolean updateBlockchain(Block block) throws RemoteException;
     // end Blockchain
 }

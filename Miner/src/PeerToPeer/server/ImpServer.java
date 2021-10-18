@@ -13,6 +13,7 @@ import entity.Block;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import system.Config;
 
 /**
@@ -21,16 +22,39 @@ import system.Config;
  */
 public class ImpServer extends UnicastRemoteObject implements IServer{
 
-    ArrayList<ImpClient> peers;
-    ArrayList<String> otherPeers;
-    Block[] blocks;
-    boolean isReadyToDownloadBlocks;
-    boolean isHandlingGetBlocks;
+    private ArrayList<ImpClient> peers;
+    private ArrayList<String> otherPeers;
+    private ArrayList<Block> blocks;
+    private boolean isReadyToDownloadBlocks;
+    private boolean isHandlingGetBlocks;
+    private Block TopBlock;
+    private boolean IsCreatingBlock;
     
     public ImpServer(ArrayList<ImpClient> peers, ArrayList<String> otherPeers) throws RemoteException{
-        isReadyToDownloadBlocks= false;
+        this.isReadyToDownloadBlocks= false;
         this.peers = peers;
         this.otherPeers = otherPeers;
+        this.IsCreatingBlock = false;
+        HandlerFile hf = new HandlerFile();
+        if(hf.ReadFileConfig()){
+            if(hf.getConfig().isIsBlockchainReady()){
+                this.isReadyToDownloadBlocks=true;
+                
+            if(hf.ReadFileConfig()){
+//                System.out.println("file config ok");
+                Config config = hf.getConfig();
+                System.out.println(config.getLocationSaveBlockchain());
+                if(hf.ReadFileBlockChain(config.getLocationSaveBlockchain())){
+//                    System.out.println("file block ok");
+                    blocks = new ArrayList<Block>(Arrays.asList(hf.getBlocks()));
+                }
+            }                
+                if(hf.ReadBlockFromFileTopBlock(hf.getConfig().getLocationSaveBlockchain())){
+                    System.out.println("contructor read topblock");
+                    this.TopBlock = hf.getTopBlock();
+                }
+            }
+        }
     }
     @Override
     public void broadCastMessage(String msg) throws RemoteException {
@@ -45,7 +69,8 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     // Handle Blockchain
     @Override
     public Block getBlock(int index) throws RemoteException {
-        return blocks[index];
+        System.out.println("getblock "+blocks.size()+"  " + blocks.get(index).getNonce());
+        return blocks.get(index);
     }
 
     @Override
@@ -55,23 +80,17 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
 
     @Override
     public int GetStatusDataBlockchain() throws RemoteException {
+
         HandlerFile hf = new HandlerFile();
         if(hf.ReadFileConfig()){
             Config config = hf.getConfig();
             if(config.isIsBlockchainReady() == false){
                 return -2;
-            }
-        }else{
-            return -2;
-        }
-        if(isReadyToDownloadBlocks == false){
-            if(isHandlingGetBlocks == false){
-                return -1;
             }else{
-                return 0;
+                return 1;
             }
-        }else{
-            return 1;
+        }else {
+            return -2;
         }
     }
     @Override
@@ -84,7 +103,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
             System.out.println(config.getLocationSaveBlockchain());
             if(hf.ReadFileBlockChain(config.getLocationSaveBlockchain())){
                 System.out.println("file block ok");
-                blocks = hf.getBlocks();
+                blocks = new ArrayList<>(Arrays.asList(hf.getBlocks()));
                 return true;
             }
         }
@@ -107,6 +126,38 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     @Override
     public int getNumberOfBlocks() throws RemoteException {
         System.out.println("client get num");
-        return blocks.length;
+        return blocks.size();
     }
+
+    @Override
+    public boolean updateBlockchain(Block block) throws RemoteException {
+        int newIndex = Integer.parseInt(block.getIndex());
+    //    Block[] blocks = new Block[newIndex];
+        HandlerFile hf = new HandlerFile();
+        if(hf.ReadFileConfig()){
+            if(blocks.size()>0){
+                blocks.add(block);
+                if(hf.WriteBlockToFileTopBlock(block, hf.getConfig().getLocationSaveBlockchain() )){
+                    System.out.println("Write file Topblock ok!");
+                }
+                if(hf.WriteFileBlockchain( blocks.toArray(new Block[blocks.size()]), hf.getConfig().getLocationSaveBlockchain()))
+                    return true;                
+            }            
+        }
+
+        return false;
+    }
+    // setter and getter
+    public Block getTopBlock() {
+        return TopBlock;
+    }
+
+    public void setIsCreatingBlock(boolean IsCreatingBlock) {
+        this.IsCreatingBlock = IsCreatingBlock;
+    }
+
+    public boolean getIsCreatingBlock() {
+        return IsCreatingBlock;
+    }
+    
 }

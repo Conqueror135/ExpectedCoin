@@ -65,4 +65,7 @@ public class ImpClient extends UnicastRemoteObject implements IClient{
             return server.getBlock(index);
     //    }
     }
+    public boolean sendNewBlockToOtherPeer(Block block) throws RemoteException{
+        return server.updateBlockchain(block);
+    }
 }
