@@ -49,7 +49,7 @@ public class DigiSig {
             return false;
         }
     }
-    private JSONObject Sig(String publicKey, String privateKey, String plaintext) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException, SignatureException, JSONException, InvalidKeySpecException {
+    static public  JSONObject Sig(String publicKey, String privateKey, String plaintext) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, UnsupportedEncodingException, SignatureException, JSONException, InvalidKeySpecException {
         PKCS8EncodedKeySpec formatted_private = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey));
 
         KeyFactory kf = KeyFactory.getInstance("EC");
@@ -68,8 +68,10 @@ public class DigiSig {
 
         return obj;
     }
-
-    private boolean Verify(JSONObject obj, String plainText) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, UnsupportedEncodingException, SignatureException, JSONException {
+    static public String getSignature(JSONObject Signature) throws JSONException{
+        return Signature.getString("signature");
+    }
+    static public boolean Verify(JSONObject obj, String plainText) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, UnsupportedEncodingException, SignatureException, JSONException {
 
         Signature ecdsaVerify = Signature.getInstance(obj.getString("algorithm"));
         KeyFactory kf = KeyFactory.getInstance("EC");
@@ -93,8 +95,13 @@ public class DigiSig {
     public String getPrivateKey() {
         return Base64.getEncoder().encodeToString(PrivateKey.getEncoded());
     }
-
-//     public static void main(String[] args) throws JSONException{
+     public static void main(String[] args) throws JSONException{
+//         DigiSig dig = new DigiSig();
+//         if(dig.generateKeys()){
+//             System.out.println("ok");
+//             System.out.println(dig.getPublicKey());
+//             System.out.println(dig.getPrivateKey());
+//         }
 //        try {
 //            DigiSig digiSig = new DigiSig();
 //            if(digiSig.generateKeys()){
@@ -117,6 +124,6 @@ public class DigiSig {
 //        } catch (InvalidKeySpecException ex) {
 //            Logger.getLogger(DigiSig.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-//    }
+    }
 //    
 }

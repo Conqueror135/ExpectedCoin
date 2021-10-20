@@ -8,9 +8,11 @@ package common;
 import entity.Block;
 import entity.Transaction;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +31,7 @@ public class Calculator {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         String record = "";
         for(int i=0; i<trans.length; i++){
-            String tran = trans[i].getSender()+trans[i].getReceiver()+trans[i].getCoin()+trans[i].getFee();
+            String tran = trans[i].toString();
             byte[] encodedhash = digest.digest(tran.getBytes(StandardCharsets.UTF_8));
             record += bytesToHex(encodedhash);
         }
@@ -40,22 +42,25 @@ public class Calculator {
         String record = block.getIndex()+block.getPreviousHeaderHash()+block.getTimestamp()+block.getMerkleRootHash()+String.valueOf(block.getConfirmations())+block.getNonce()+block.getCore().toString();
         return stringHash(record);
     }
-    static String stringHash(String s) throws NoSuchAlgorithmException{
+    public static String stringHash(String s) throws NoSuchAlgorithmException{
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] encodedhash = digest.digest(s.getBytes(StandardCharsets.UTF_8)); 
         return bytesToHex(encodedhash);        
     }
     private static String bytesToHex(byte[] hash) {
-    StringBuilder hexString = new StringBuilder(2 * hash.length);
-    for (int i = 0; i < hash.length; i++) {
-        String hex = Integer.toHexString(0xff & hash[i]);
-        if(hex.length() == 1) {
-            hexString.append('0');
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if(hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
         }
-        hexString.append(hex);
+        return hexString.toString();
     }
-    return hexString.toString();
-}
+    public static String getStringFromKey(Key key){
+        return Base64.getEncoder().encodeToString(key.getEncoded());
+    }
 //    public static void main(String[] args){
 //        ArrayList<Transaction> trans = new ArrayList<Transaction>();
 //        trans.add(new Transaction("Thang", "Than", 5.2, 0.02));

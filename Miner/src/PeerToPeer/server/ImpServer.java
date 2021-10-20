@@ -7,13 +7,29 @@ package PeerToPeer.server;
 
 import PeerToPeer.client.ImpClient;
 import PeerToPeer.client.IClient;
+import common.Calculator;
 import common.CreateConnect;
+import common.DigiSig;
 import common.HandlerFile;
 import entity.Block;
+import entity.Transaction;
+import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import mncoin.TransactionInput;
+import mncoin.TransactionOutput;
+import org.json.JSONException;
+import org.json.JSONObject;
 import system.Config;
 
 /**
@@ -29,30 +45,47 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     private boolean isHandlingGetBlocks;
     private Block TopBlock;
     private boolean IsCreatingBlock;
+    private  Map<String,TransactionOutput> UTXOs ;
+    private ArrayList<Transaction> WaitingTransaction;
     
     public ImpServer(ArrayList<ImpClient> peers, ArrayList<String> otherPeers) throws RemoteException{
         this.isReadyToDownloadBlocks= false;
         this.peers = peers;
         this.otherPeers = otherPeers;
         this.IsCreatingBlock = false;
+        this.WaitingTransaction = new ArrayList<Transaction>();
+        this.UTXOs = new HashMap<String,TransactionOutput>();
         HandlerFile hf = new HandlerFile();
         if(hf.ReadFileConfig()){
             if(hf.getConfig().isIsBlockchainReady()){
                 this.isReadyToDownloadBlocks=true;
                 
-            if(hf.ReadFileConfig()){
-//                System.out.println("file config ok");
-                Config config = hf.getConfig();
-                System.out.println(config.getLocationSaveBlockchain());
-                if(hf.ReadFileBlockChain(config.getLocationSaveBlockchain())){
-//                    System.out.println("file block ok");
-                    blocks = new ArrayList<Block>(Arrays.asList(hf.getBlocks()));
-                }
-            }                
-                if(hf.ReadBlockFromFileTopBlock(hf.getConfig().getLocationSaveBlockchain())){
-                    System.out.println("contructor read topblock");
-                    this.TopBlock = hf.getTopBlock();
-                }
+                if(hf.ReadFileConfig()){
+    //                System.out.println("file config ok");
+                    Config config = hf.getConfig();
+                    System.out.println(config.getLocationSaveBlockchain());
+                    if(hf.ReadFileBlockChain(config.getLocationSaveBlockchain())){
+    //                    System.out.println("file block ok");
+                        this.blocks = new ArrayList<Block>(Arrays.asList(hf.getBlocks()));
+                    }else{
+                        System.out.println("no ok blocks");
+                    }
+                    if(hf.ReadBlockFromFileTopBlock(config.getLocationSaveBlockchain())){
+                        System.out.println("contructor read topblock");
+                        this.TopBlock = hf.getTopBlock();
+                    }  
+                    for(Block block : this.blocks){
+                        if(block.getTrans()!=null)
+                        for(Transaction tran : block.getTrans()){
+                            for(TransactionOutput out : tran.getOutputs()){
+                                //    transactionId = Calculator.stringHash(planttext);
+                                this.UTXOs.put(out.id, out);
+                            }
+                        }
+                    }                    
+                }                
+
+
             }
         }
     }
@@ -158,6 +191,71 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
 
     public boolean getIsCreatingBlock() {
         return IsCreatingBlock;
+    }
+
+    @Override
+    public boolean handlerTransactions(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient,  float TotalValue, float value, JSONObject Signature, String CreateTime) throws RemoteException {
+        ArrayList<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
+        String planttext = PubSender+ PubRecipient+ String.valueOf(TotalValue)+CreateTime;
+        String transactionId="";
+        try {
+            transactionId = Calculator.stringHash(planttext);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(ImpServer.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+        
+        try {
+            if(!DigiSig.Verify(Signature, planttext)){ 
+                System.out.println("Chu ky ko hop le!");
+                return false;
+            }
+        } catch (NoSuchAlgorithmException|InvalidKeySpecException|InvalidKeyException|UnsupportedEncodingException|SignatureException|JSONException ex) {
+            return false;
+        } 
+	for(TransactionInput input : inputs) {
+            input.UTXO = UTXOs.get(input.transactionOutputId);
+	}
+        float leftOver = TotalValue -value;
+        try {
+            outputs.add(new TransactionOutput(PubRecipient, value, transactionId));
+            if(leftOver > 0)
+                outputs.add(new TransactionOutput(PubSender, leftOver, transactionId));
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(ImpServer.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+        for(TransactionInput input : inputs) {
+            if(input.UTXO == null) continue; //if Transaction can't be found skip it 
+            UTXOs.remove(input.UTXO.id);
+	}        
+        try {
+            //UTXOs.put(output.id, output);
+            WaitingTransaction.add(new Transaction(PubSender, PubRecipient, CreateTime, DigiSig.getSignature(Signature), value, outputs.toArray(new TransactionOutput[outputs.size()] )));
+        } catch (JSONException ex){
+            System.out.println("loi add waiting transaction!");
+            return false;
+        }
+
+        return true;
+    }
+
+    public ArrayList<Transaction> getWaitingTransaction() {
+        
+        return WaitingTransaction;
+    }
+
+    @Override
+    public ArrayList<TransactionOutput> getBalance(String PublicKey) throws RemoteException {
+        ArrayList<TransactionOutput>  trans = new ArrayList<TransactionOutput>();
+        for(Map.Entry<String, TransactionOutput> entry : UTXOs.entrySet()){
+            if(entry.getValue().isMine(PublicKey)){
+                trans.add(entry.getValue());
+            }
+        }
+        return trans;
     }
     
 }

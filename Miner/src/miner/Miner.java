@@ -50,16 +50,17 @@ public class Miner {
 //            }
         //    PoW pow = new PoW(OtherPeers);
         }
-        Transaction[] trans ={ new Transaction("thang","Than", 2.0, 0.6)};
+        
         if(hf.getConfig().isIsBlockchainReady()){
             System.out.println("pow");
             while(true){
             //    System.out.println("ll");
                 if(!indexGui.getIsStopMining()&& !impServer.getIsCreatingBlock()){
                     
+                    Transaction[] trans = impServer.getWaitingTransaction().toArray(new Transaction[impServer.getWaitingTransaction().size()]);
                     impServer.setIsCreatingBlock(true);
                     Block TopBlock = impServer.getTopBlock();
-                    System.out.println(TopBlock.getNonce());
+                //    System.out.println(TopBlock.getNonce());
                     Block newBlock = new Block();
                     newBlock.setMiner("1Bf9sZvBHPFGVPX71WX2njhd1NXKv5y7v5");
                     newBlock.setTrans(trans);

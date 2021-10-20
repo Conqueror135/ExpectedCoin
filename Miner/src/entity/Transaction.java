@@ -6,6 +6,9 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import mncoin.TransactionInput;
+import mncoin.TransactionOutput;
 
 /**
  *
@@ -14,14 +17,18 @@ import java.io.Serializable;
 public class Transaction implements Serializable{
     private String Sender;// Dia chi vi cua nguoi gui
     private String Receiver;// Dia chi vi cua nguoi nhan
-    private double Coin;// So luong coin gui di
-    private double Fee; // Phi giao dich
+    private String CreateTime;
+    private String Signature;
+    private float value;// So luong coin gui di
+    private TransactionOutput[] Outputs;
 
-    public Transaction(String Sender, String Receiver, double Coin, double Fee) {
+    public Transaction(String Sender, String Receiver, String CreateTime, String Signature, float value, TransactionOutput[] Outputs) {
         this.Sender = Sender;
         this.Receiver = Receiver;
-        this.Coin = Coin;
-        this.Fee = Fee;
+        this.CreateTime = CreateTime;
+        this.Signature = Signature;
+        this.value = value;
+        this.Outputs = Outputs;
     }
 
     public String getSender() {
@@ -32,11 +39,28 @@ public class Transaction implements Serializable{
         return Receiver;
     }
 
-    public double getCoin() {
-        return Coin;
+    public String getCreateTime() {
+        return CreateTime;
     }
 
-    public double getFee() {
-        return Fee;
+    public String getSignature() {
+        return Signature;
+    }
+
+    public float getValue() {
+        return value;
+    }
+
+    public TransactionOutput[] getOutputs() {
+        return Outputs;
+    }
+
+    @Override
+    public String toString(){
+        String out="";
+        for(TransactionOutput output: Outputs){
+            out+= output.toString();
+        }
+        return Sender+"_"+Receiver+"_"+CreateTime+"_"+Signature+"_"+value+"_"+out;
     }
 }
