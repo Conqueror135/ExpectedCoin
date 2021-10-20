@@ -49,7 +49,7 @@ public class PoW{
     public void started() throws NoSuchAlgorithmException{
         newBlock.setIndex(String.valueOf(oldIndex+1));
         newBlock.setCore(core);
-        newBlock.setTimestamp(java.time.LocalDateTime.now().toString());
+        
         newBlock.setConfirmations(1);
         newBlock.setPreviousHeaderHash(oldBlock.getHeaderHash());
         newBlock.setMerkleRootHash(cal.calculateMerkleRootHash(newBlock.getTrans()));
@@ -76,6 +76,7 @@ public class PoW{
                     System.out.println("ko gui dc block");
                 }
             }
+            impServer.updateNewBlockInMyself(newBlock);
         }
     }
     	private static String repeat(String str, int repeat) {

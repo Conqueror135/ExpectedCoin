@@ -96,12 +96,12 @@ public class DigiSig {
         return Base64.getEncoder().encodeToString(PrivateKey.getEncoded());
     }
      public static void main(String[] args) throws JSONException{
-//         DigiSig dig = new DigiSig();
-//         if(dig.generateKeys()){
-//             System.out.println("ok");
-//             System.out.println(dig.getPublicKey());
-//             System.out.println(dig.getPrivateKey());
-//         }
+         DigiSig dig = new DigiSig();
+         if(dig.generateKeys()){
+             System.out.println("ok");
+             System.out.println(dig.getPublicKey());
+             System.out.println(dig.getPrivateKey());
+         }
 //        try {
 //            DigiSig digiSig = new DigiSig();
 //            if(digiSig.generateKeys()){

@@ -56,7 +56,7 @@ public class HandlerFile {
     public boolean  ReadFileConfig(){
         try {
             ObjectInputStream ois;
-            try (FileInputStream fis = new FileInputStream("D:\\ExpectedCoinMiner\\config.bin")) {
+            try (FileInputStream fis = new FileInputStream("C:\\ExpectedCoinMiner\\config.bin")) {
                 ois = new ObjectInputStream(fis);
                 //Bước 2: Đọc dữ liệu
                 config = (Config) ois.readObject();
@@ -71,7 +71,7 @@ public class HandlerFile {
         try {
             ObjectOutputStream oos;
             //out = Files.newOutputStream(path, CREATE, APPEND);
-            try (FileOutputStream fos = new FileOutputStream("D:\\ExpectedCoinMiner\\config.bin")) {
+            try (FileOutputStream fos = new FileOutputStream("C:\\ExpectedCoinMiner\\config.bin")) {
                 //out = Files.newOutputStream(path, CREATE, APPEND);
                 oos = new ObjectOutputStream(fos);
                 // Ghi dối tượng config vào file

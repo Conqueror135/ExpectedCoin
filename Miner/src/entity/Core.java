@@ -12,13 +12,13 @@ import java.io.Serializable;
  * @author Admin
  */
 public class Core implements Serializable  {
-    private String SystemAddress; // Địa chỉ ví của hệ thống
+    private String SystemAddress = "MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAET2qhZqxcyFT3nFJ162oWx9W8NHu9xmBRrafdzOeUCLDrGqbxkWJJ+1ZKgFd24wLsQXyEthbWXeE1CKzL5KBUcw=="; // Địa chỉ ví của hệ thống
     private double TotalCoin; // so luong coin co trong he thong con co the thuong cho tho dao// tong so luonng coin co trong he thong la  
     private int Difficult;// so luong so 0 yeu cau cua ma bam
     private double Reward; // phan thuong quy dinh thuong khi mot block dc tao ra
     private double FloorFeeReward; // phi giao dich toi thieu
     private int halving; // so nam de giam reward di 1/2
-
+ 
     public Core(double TotalCoin, int Difficult, double Reward, int halving) {
         this.TotalCoin = TotalCoin;
         this.Difficult = Difficult;

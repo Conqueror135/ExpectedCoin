@@ -6,6 +6,7 @@
 package mncoin;
 
 import common.Calculator;
+import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 
@@ -13,7 +14,7 @@ import java.security.PublicKey;
  *
  * @author Admin
  */
-public class TransactionOutput {
+public class TransactionOutput implements Serializable  {
 	public String id;
 	public String recipient; //also known as the new owner of these coins.
 	public float value; //the amount of coins they own

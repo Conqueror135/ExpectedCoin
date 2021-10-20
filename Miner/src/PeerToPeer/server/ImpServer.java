@@ -79,6 +79,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
                         for(Transaction tran : block.getTrans()){
                             for(TransactionOutput out : tran.getOutputs()){
                                 //    transactionId = Calculator.stringHash(planttext);
+//                                System.out.println(out.toString());
                                 this.UTXOs.put(out.id, out);
                             }
                         }
@@ -180,6 +181,20 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
 
         return false;
     }
+    public boolean updateNewBlockInMyself(Block block){
+        HandlerFile hf = new HandlerFile();
+        if(hf.ReadFileConfig()){
+            if(blocks.size()>0){
+                blocks.add(block);
+                if(hf.WriteBlockToFileTopBlock(block, hf.getConfig().getLocationSaveBlockchain() )){
+                    System.out.println("Write file Topblock ok!");
+                }
+                if(hf.WriteFileBlockchain( blocks.toArray(new Block[blocks.size()]), hf.getConfig().getLocationSaveBlockchain()))
+                    return true;                
+            }            
+        }    
+        return false;
+    }    
     // setter and getter
     public Block getTopBlock() {
         return TopBlock;
