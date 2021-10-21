@@ -30,7 +30,7 @@ public class TransactionOutput implements Serializable  {
 	
 	//Check if coin belongs to you
 	public boolean isMine(String publicKey) {
-		return (publicKey == recipient);
+		return (publicKey == null ? recipient == null : publicKey.equals(recipient));
 	}    
         @Override
         public String toString(){

@@ -264,12 +264,16 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
 
     @Override
     public ArrayList<TransactionOutput> getBalance(String PublicKey) throws RemoteException {
+        System.out.println("wallet calling");
         ArrayList<TransactionOutput>  trans = new ArrayList<TransactionOutput>();
+        System.out.println(PublicKey);
         for(Map.Entry<String, TransactionOutput> entry : UTXOs.entrySet()){
+            System.out.println(entry.getValue().recipient);
             if(entry.getValue().isMine(PublicKey)){
                 trans.add(entry.getValue());
             }
         }
+        System.out.println(trans.size());
         return trans;
     }
     

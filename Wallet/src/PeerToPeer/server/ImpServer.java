@@ -52,43 +52,43 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
         this.isReadyToDownloadBlocks= false;
         this.peers = peers;
         this.otherPeers = otherPeers;
-        this.IsCreatingBlock = false;
-        this.WaitingTransaction = new ArrayList<Transaction>();
-        this.UTXOs = new HashMap<String,TransactionOutput>();
-        HandlerFile hf = new HandlerFile();
-        if(hf.ReadFileConfig()){
-            if(hf.getConfig().isIsBlockchainReady()){
-                this.isReadyToDownloadBlocks=true;
-                
-                if(hf.ReadFileConfig()){
-    //                System.out.println("file config ok");
-                    Config config = hf.getConfig();
-                    System.out.println(config.getLocationSaveBlockchain());
-                    if(hf.ReadFileBlockChain(config.getLocationSaveBlockchain())){
-    //                    System.out.println("file block ok");
-                        this.blocks = new ArrayList<Block>(Arrays.asList(hf.getBlocks()));
-                    }else{
-                        System.out.println("no ok blocks");
-                    }
-                    if(hf.ReadBlockFromFileTopBlock(config.getLocationSaveBlockchain())){
-                        System.out.println("contructor read topblock");
-                        this.TopBlock = hf.getTopBlock();
-                    }  
-                    for(Block block : this.blocks){
-                        if(block.getTrans()!=null)
-                        for(Transaction tran : block.getTrans()){
-                            for(TransactionOutput out : tran.getOutputs()){
-                                //    transactionId = Calculator.stringHash(planttext);
-//                                System.out.println(out.toString());
-                                this.UTXOs.put(out.id, out);
-                            }
-                        }
-                    }                    
-                }                
-
-
-            }
-        }
+//        this.IsCreatingBlock = false;
+//        this.WaitingTransaction = new ArrayList<Transaction>();
+//        this.UTXOs = new HashMap<String,TransactionOutput>();
+//        HandlerFile hf = new HandlerFile();
+//        if(hf.ReadFileConfig()){
+//            if(hf.getConfig().isIsBlockchainReady()){
+//                this.isReadyToDownloadBlocks=true;
+//                
+//                if(hf.ReadFileConfig()){
+//    //                System.out.println("file config ok");
+//                    Config config = hf.getConfig();
+//                    System.out.println(config.getLocationSaveBlockchain());
+//                    if(hf.ReadFileBlockChain(config.getLocationSaveBlockchain())){
+//    //                    System.out.println("file block ok");
+//                        this.blocks = new ArrayList<Block>(Arrays.asList(hf.getBlocks()));
+//                    }else{
+//                        System.out.println("no ok blocks");
+//                    }
+//                    if(hf.ReadBlockFromFileTopBlock(config.getLocationSaveBlockchain())){
+//                        System.out.println("contructor read topblock");
+//                        this.TopBlock = hf.getTopBlock();
+//                    }  
+//                    for(Block block : this.blocks){
+//                        if(block.getTrans()!=null)
+//                        for(Transaction tran : block.getTrans()){
+//                            for(TransactionOutput out : tran.getOutputs()){
+//                                //    transactionId = Calculator.stringHash(planttext);
+////                                System.out.println(out.toString());
+//                                this.UTXOs.put(out.id, out);
+//                            }
+//                        }
+//                    }                    
+//                }                
+//
+//
+//            }
+//        }
     }
     @Override
     public void broadCastMessage(String msg) throws RemoteException {
@@ -115,33 +115,34 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     @Override
     public int GetStatusDataBlockchain() throws RemoteException {
 
-        HandlerFile hf = new HandlerFile();
-        if(hf.ReadFileConfig()){
-            Config config = hf.getConfig();
-            if(config.isIsBlockchainReady() == false){
-                return -2;
-            }else{
-                return 1;
-            }
-        }else {
-            return -2;
-        }
+//        HandlerFile hf = new HandlerFile();
+//        if(hf.ReadFileConfig()){
+//            Config config = hf.getConfig();
+//            if(config.isIsBlockchainReady() == false){
+//                return -2;
+//            }else{
+//                return 1;
+//            }
+//        }else {
+//            return -2;
+//        }
+    return 1;
     }
     @Override
     public boolean getBlockFromFile(){
-        System.out.println("client call");
-        HandlerFile hf = new HandlerFile();
-        if(hf.ReadFileConfig()){
-            System.out.println("file config ok");
-            Config config = hf.getConfig();
-            System.out.println(config.getLocationSaveBlockchain());
-            if(hf.ReadFileBlockChain(config.getLocationSaveBlockchain())){
-                System.out.println("file block ok");
-                blocks = new ArrayList<>(Arrays.asList(hf.getBlocks()));
-                return true;
-            }
-        }
-        System.out.println("file ko ok");
+//        System.out.println("client call");
+//        HandlerFile hf = new HandlerFile();
+//        if(hf.ReadFileConfig()){
+//            System.out.println("file config ok");
+//            Config config = hf.getConfig();
+//            System.out.println(config.getLocationSaveBlockchain());
+//            if(hf.ReadFileBlockChain(config.getLocationSaveBlockchain())){
+//                System.out.println("file block ok");
+//                blocks = new ArrayList<>(Arrays.asList(hf.getBlocks()));
+//                return true;
+//            }
+//        }
+//        System.out.println("file ko ok");
         return false;
     }
 
@@ -165,34 +166,34 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
 
     @Override
     public boolean updateBlockchain(Block block) throws RemoteException {
-        int newIndex = Integer.parseInt(block.getIndex());
-    //    Block[] blocks = new Block[newIndex];
-        HandlerFile hf = new HandlerFile();
-        if(hf.ReadFileConfig()){
-            if(blocks.size()>0){
-                blocks.add(block);
-                if(hf.WriteBlockToFileTopBlock(block, hf.getConfig().getLocationSaveBlockchain() )){
-                    System.out.println("Write file Topblock ok!");
-                }
-                if(hf.WriteFileBlockchain( blocks.toArray(new Block[blocks.size()]), hf.getConfig().getLocationSaveBlockchain()))
-                    return true;                
-            }            
-        }
+//        int newIndex = Integer.parseInt(block.getIndex());
+//    //    Block[] blocks = new Block[newIndex];
+//        HandlerFile hf = new HandlerFile();
+//        if(hf.ReadFileConfig()){
+//            if(blocks.size()>0){
+//                blocks.add(block);
+//                if(hf.WriteBlockToFileTopBlock(block, hf.getConfig().getLocationSaveBlockchain() )){
+//                    System.out.println("Write file Topblock ok!");
+//                }
+//                if(hf.WriteFileBlockchain( blocks.toArray(new Block[blocks.size()]), hf.getConfig().getLocationSaveBlockchain()))
+//                    return true;                
+//            }            
+//        }
 
         return false;
     }
     public boolean updateNewBlockInMyself(Block block){
-        HandlerFile hf = new HandlerFile();
-        if(hf.ReadFileConfig()){
-            if(blocks.size()>0){
-                blocks.add(block);
-                if(hf.WriteBlockToFileTopBlock(block, hf.getConfig().getLocationSaveBlockchain() )){
-                    System.out.println("Write file Topblock ok!");
-                }
-                if(hf.WriteFileBlockchain( blocks.toArray(new Block[blocks.size()]), hf.getConfig().getLocationSaveBlockchain()))
-                    return true;                
-            }            
-        }    
+//        HandlerFile hf = new HandlerFile();
+//        if(hf.ReadFileConfig()){
+//            if(blocks.size()>0){
+//                blocks.add(block);
+//                if(hf.WriteBlockToFileTopBlock(block, hf.getConfig().getLocationSaveBlockchain() )){
+//                    System.out.println("Write file Topblock ok!");
+//                }
+//                if(hf.WriteFileBlockchain( blocks.toArray(new Block[blocks.size()]), hf.getConfig().getLocationSaveBlockchain()))
+//                    return true;                
+//            }            
+//        }    
         return false;
     }    
     // setter and getter
@@ -210,49 +211,49 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
 
     @Override
     public boolean handlerTransactions(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient,  float TotalValue, float value, JSONObject Signature, String CreateTime) throws RemoteException {
-        ArrayList<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
-        String planttext = PubSender+ PubRecipient+ String.valueOf(TotalValue)+CreateTime;
-        String transactionId="";
-        try {
-            transactionId = Calculator.stringHash(planttext);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(ImpServer.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-        
-        
-        try {
-            if(!DigiSig.Verify(Signature, planttext)){ 
-                System.out.println("Chu ky ko hop le!");
-                return false;
-            }
-        } catch (NoSuchAlgorithmException|InvalidKeySpecException|InvalidKeyException|UnsupportedEncodingException|SignatureException|JSONException ex) {
-            return false;
-        } 
-	for(TransactionInput input : inputs) {
-            input.UTXO = UTXOs.get(input.transactionOutputId);
-	}
-        float leftOver = TotalValue -value;
-        try {
-            outputs.add(new TransactionOutput(PubRecipient, value, transactionId));
-            if(leftOver > 0)
-                outputs.add(new TransactionOutput(PubSender, leftOver, transactionId));
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(ImpServer.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-        
-        for(TransactionInput input : inputs) {
-            if(input.UTXO == null) continue; //if Transaction can't be found skip it 
-            UTXOs.remove(input.UTXO.id);
-	}        
-        try {
-            //UTXOs.put(output.id, output);
-            WaitingTransaction.add(new Transaction(PubSender, PubRecipient, CreateTime, DigiSig.getSignature(Signature), value, outputs.toArray(new TransactionOutput[outputs.size()] )));
-        } catch (JSONException ex){
-            System.out.println("loi add waiting transaction!");
-            return false;
-        }
+//        ArrayList<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
+//        String planttext = PubSender+ PubRecipient+ String.valueOf(TotalValue)+CreateTime;
+//        String transactionId="";
+//        try {
+//            transactionId = Calculator.stringHash(planttext);
+//        } catch (NoSuchAlgorithmException ex) {
+//            Logger.getLogger(ImpServer.class.getName()).log(Level.SEVERE, null, ex);
+//            return false;
+//        }
+//        
+//        
+//        try {
+//            if(!DigiSig.Verify(Signature, planttext)){ 
+//                System.out.println("Chu ky ko hop le!");
+//                return false;
+//            }
+//        } catch (NoSuchAlgorithmException|InvalidKeySpecException|InvalidKeyException|UnsupportedEncodingException|SignatureException|JSONException ex) {
+//            return false;
+//        } 
+//	for(TransactionInput input : inputs) {
+//            input.UTXO = UTXOs.get(input.transactionOutputId);
+//	}
+//        float leftOver = TotalValue -value;
+//        try {
+//            outputs.add(new TransactionOutput(PubRecipient, value, transactionId));
+//            if(leftOver > 0)
+//                outputs.add(new TransactionOutput(PubSender, leftOver, transactionId));
+//        } catch (NoSuchAlgorithmException ex) {
+//            Logger.getLogger(ImpServer.class.getName()).log(Level.SEVERE, null, ex);
+//            return false;
+//        }
+//        
+//        for(TransactionInput input : inputs) {
+//            if(input.UTXO == null) continue; //if Transaction can't be found skip it 
+//            UTXOs.remove(input.UTXO.id);
+//	}        
+//        try {
+//            //UTXOs.put(output.id, output);
+//            WaitingTransaction.add(new Transaction(PubSender, PubRecipient, CreateTime, DigiSig.getSignature(Signature), value, outputs.toArray(new TransactionOutput[outputs.size()] )));
+//        } catch (JSONException ex){
+//            System.out.println("loi add waiting transaction!");
+//            return false;
+//        }
 
         return true;
     }
@@ -265,11 +266,11 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     @Override
     public ArrayList<TransactionOutput> getBalance(String PublicKey) throws RemoteException {
         ArrayList<TransactionOutput>  trans = new ArrayList<TransactionOutput>();
-        for(Map.Entry<String, TransactionOutput> entry : UTXOs.entrySet()){
-            if(entry.getValue().isMine(PublicKey)){
-                trans.add(entry.getValue());
-            }
-        }
+//        for(Map.Entry<String, TransactionOutput> entry : UTXOs.entrySet()){
+//            if(entry.getValue().isMine(PublicKey)){
+//                trans.add(entry.getValue());
+//            }
+//        }
         return trans;
     }
     

@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -56,7 +58,7 @@ public class HandlerFile {
     public boolean  ReadFileConfig(){
         try {
             ObjectInputStream ois;
-            try (FileInputStream fis = new FileInputStream("C:\\ExpectedCoinMiner\\config.bin")) {
+            try (FileInputStream fis = new FileInputStream("C:\\ExpectedCoinWallet\\configWallet.bin")) {
                 ois = new ObjectInputStream(fis);
                 //Bước 2: Đọc dữ liệu
                 config = (Config) ois.readObject();
@@ -71,7 +73,7 @@ public class HandlerFile {
         try {
             ObjectOutputStream oos;
             //out = Files.newOutputStream(path, CREATE, APPEND);
-            try (FileOutputStream fos = new FileOutputStream("C:\\ExpectedCoinMiner\\config.bin")) {
+            try (FileOutputStream fos = new FileOutputStream("C:\\ExpectedCoinWallet\\configWallet.bin")) {
                 //out = Files.newOutputStream(path, CREATE, APPEND);
                 oos = new ObjectOutputStream(fos);
                 // Ghi dối tượng config vào file
@@ -143,6 +145,36 @@ public class HandlerFile {
         } catch (IOException | ClassNotFoundException ex) {
             return false;
         }               
+    }
+    public boolean writeFile(String path){
+        try {
+            FileWriter fw = new FileWriter("D:\\testout.txt");
+            fw.write("Welcome to java.");
+            fw.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+    public String readFile(String path){
+        String re="";
+        FileReader fr;
+        try {
+            fr = new FileReader(path);
+            int i;
+            while ((i = fr.read()) != -1) {
+                System.out.print((char) i);
+                re+=String.valueOf((char) i);
+            }
+            fr.close();       
+            return re;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(HandlerFile.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(HandlerFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return re;
     }
     public Block[] getBlocks() {
         return blocks;

@@ -33,15 +33,32 @@ public class Wallet {
         HandlerFile hf = new HandlerFile(); // khoi tao class xu ly file ( doc, ghi file và tao folder)
         Index indexGui = new Index(OtherPeers); 
         indexGui.setVisible(true);
-        for(ImpClient otherPeer : OtherPeers){
+        while(true){
+            float total = 0;
+            if(hf.ReadFileConfig()){
+                for(ImpClient otherPeer : OtherPeers){
+                    try {
+                        ArrayList<TransactionOutput> myOutput = otherPeer.getBalance(hf.getConfig().getAddressWallet());
+                        indexGui.setMyUTXO(myOutput.toArray(new TransactionOutput[myOutput.size()]));
+                        for(int i =0; i< myOutput.size();i++)
+                            total+= myOutput.get(i).value;
+                        break;
+                        //    System.out.println(myOutput.get(i).toString());
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(Wallet.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }                  
+            }
+
+            indexGui.updateBalance(total, 0, total);
+            System.out.println("kk");
             try {
-                ArrayList<TransactionOutput> myOutput = otherPeer.getBalance("MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEFopTPD5fYYcggdsjDgj8e1F7jC5hkjwW/DsRRztPjfjosuIykyYdxaLzxYFZdv11dvhF8s0orZFBOJ2kDW78zQ==");
-                for(int i =0; i< myOutput.size();i++)
-                    System.out.println(myOutput.get(i).toString());
-            } catch (RemoteException ex) {
+                Thread.sleep(10000);
+            } catch (InterruptedException ex) {
                 Logger.getLogger(Wallet.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
     }
     
 }

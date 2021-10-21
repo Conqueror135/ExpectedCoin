@@ -51,7 +51,7 @@ public class GenesisBlock {
 //        a1.setCore(core);
 //        Block b[]= {a1};
 //    
-//       if(hf.WriteFileBlockchain(b,"D:\\EPC\\" )){
+//       if(hf.WriteBlockToFileTopBlock(a1,"D:\\EPC\\" )){
 //           System.out.println("ok");
 //       } else{
 //           System.out.println("Loio");

@@ -7,7 +7,15 @@ package wallet.GUI;
 
 import PeerToPeer.client.ImpClient;
 import common.DigiSig;
+import common.HandlerFile;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import mncoin.HandlerWallet;
+import mncoin.TransactionOutput;
+import system.Config;
 
 /**
  *
@@ -16,6 +24,7 @@ import java.util.ArrayList;
 public class Index extends javax.swing.JFrame {
 
     private ArrayList<ImpClient> OtherPeers;
+    private TransactionOutput[] myUTXO;
     /**
      * Creates new form Index
      */
@@ -24,7 +33,16 @@ public class Index extends javax.swing.JFrame {
         initComponents();
         //jTabbedPane1.setSelectedIndex(1);
     }
+    public void updateBalance(float lbAvaliables, float  lbPendings, float lbTotals){
+    lbAvaliable.setText(String.valueOf(lbAvaliables));
+    lbPending.setText(String.valueOf(lbPendings));
+    lbTotal.setText(String.valueOf(lbTotals));
+    }
 
+    public void setMyUTXO(TransactionOutput[] myUTXO) {
+        this.myUTXO = myUTXO;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -48,6 +66,13 @@ public class Index extends javax.swing.JFrame {
         BtnSavePrivateKeyInDialog = new javax.swing.JButton();
         btnOkInDialog = new javax.swing.JButton();
         btnCancelInDialog = new javax.swing.JButton();
+        jDialog2 = new javax.swing.JDialog();
+        jPanel12 = new javax.swing.JPanel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        textPrivateKeyInDialogSend = new javax.swing.JTextArea();
+        btnChosePrivateKeyInDialogSend = new javax.swing.JButton();
+        btnSendInDialogSend = new javax.swing.JToggleButton();
+        btnCancelInDialogSend = new javax.swing.JToggleButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
@@ -65,14 +90,14 @@ public class Index extends javax.swing.JFrame {
         jPanel11 = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
+        txtAddressReceiver = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
-        jSpinner4 = new javax.swing.JSpinner();
+        jSpinnerAmount = new javax.swing.JSpinner();
         jComboBox4 = new javax.swing.JComboBox<>();
         jTextField8 = new javax.swing.JTextField();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        btnChoseAddressToSend = new javax.swing.JButton();
+        btnSend = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
@@ -134,6 +159,11 @@ public class Index extends javax.swing.JFrame {
 
         btnImportWalletInDialog.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         btnImportWalletInDialog.setText("Import");
+        btnImportWalletInDialog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportWalletInDialogActionPerformed(evt);
+            }
+        });
 
         textPublicKeyInDialog.setColumns(20);
         textPublicKeyInDialog.setLineWrap(true);
@@ -175,6 +205,11 @@ public class Index extends javax.swing.JFrame {
 
         BtnSavePrivateKeyInDialog.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         BtnSavePrivateKeyInDialog.setText("Save");
+        BtnSavePrivateKeyInDialog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnSavePrivateKeyInDialogActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -200,9 +235,19 @@ public class Index extends javax.swing.JFrame {
 
         btnOkInDialog.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         btnOkInDialog.setText("OK");
+        btnOkInDialog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOkInDialogActionPerformed(evt);
+            }
+        });
 
         btnCancelInDialog.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         btnCancelInDialog.setText("Cancel");
+        btnCancelInDialog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelInDialogActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -236,6 +281,91 @@ public class Index extends javax.swing.JFrame {
                     .addComponent(btnOkInDialog)
                     .addComponent(btnCancelInDialog))
                 .addContainerGap())
+        );
+
+        jDialog2.setTitle("Send ExpectedCoin");
+        jDialog2.setMinimumSize(new java.awt.Dimension(717, 353));
+        jDialog2.setModal(true);
+
+        jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Your Private Key", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 12))); // NOI18N
+
+        textPrivateKeyInDialogSend.setColumns(20);
+        textPrivateKeyInDialogSend.setLineWrap(true);
+        textPrivateKeyInDialogSend.setRows(5);
+        jScrollPane7.setViewportView(textPrivateKeyInDialogSend);
+
+        btnChosePrivateKeyInDialogSend.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        btnChosePrivateKeyInDialogSend.setText("Open");
+        btnChosePrivateKeyInDialogSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChosePrivateKeyInDialogSendActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
+        jPanel12.setLayout(jPanel12Layout);
+        jPanel12Layout.setHorizontalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 587, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnChosePrivateKeyInDialogSend)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel12Layout.setVerticalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addComponent(btnChosePrivateKeyInDialogSend)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btnSendInDialogSend.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnSendInDialogSend.setText("Send");
+        btnSendInDialogSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSendInDialogSendActionPerformed(evt);
+            }
+        });
+
+        btnCancelInDialogSend.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnCancelInDialogSend.setText("Cancel");
+        btnCancelInDialogSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelInDialogSendActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jDialog2Layout = new javax.swing.GroupLayout(jDialog2.getContentPane());
+        jDialog2.getContentPane().setLayout(jDialog2Layout);
+        jDialog2Layout.setHorizontalGroup(
+            jDialog2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialog2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jDialog2Layout.createSequentialGroup()
+                .addGap(233, 233, 233)
+                .addComponent(btnSendInDialogSend, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(btnCancelInDialogSend, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jDialog2Layout.setVerticalGroup(
+            jDialog2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog2Layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
+                .addGroup(jDialog2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSendInDialogSend)
+                    .addComponent(btnCancelInDialogSend))
+                .addGap(44, 44, 44))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -365,7 +495,12 @@ public class Index extends javax.swing.JFrame {
         jComboBox4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "EPC", "BTC", " " }));
 
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Asset/Icon/folder.png"))); // NOI18N
+        btnChoseAddressToSend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Asset/Icon/folder.png"))); // NOI18N
+        btnChoseAddressToSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChoseAddressToSendActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -383,13 +518,13 @@ public class Index extends javax.swing.JFrame {
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel10Layout.createSequentialGroup()
-                                .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jSpinnerAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel10Layout.createSequentialGroup()
-                                .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 609, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtAddressReceiver, javax.swing.GroupLayout.PREFERRED_SIZE, 609, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton7)))
+                                .addComponent(btnChoseAddressToSend)))
                         .addGap(0, 12, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -398,9 +533,9 @@ public class Index extends javax.swing.JFrame {
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnChoseAddressToSend, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtAddressReceiver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel14)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -409,7 +544,7 @@ public class Index extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
-                    .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSpinnerAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(33, Short.MAX_VALUE))
         );
@@ -427,9 +562,14 @@ public class Index extends javax.swing.JFrame {
                 .addGap(0, 83, Short.MAX_VALUE))
         );
 
-        jButton8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Asset/Icon/send.png"))); // NOI18N
-        jButton8.setText("Send");
+        btnSend.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnSend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Asset/Icon/send.png"))); // NOI18N
+        btnSend.setText("Send");
+        btnSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSendActionPerformed(evt);
+            }
+        });
 
         jButton9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Asset/Icon/delete.png"))); // NOI18N
@@ -450,7 +590,7 @@ public class Index extends javax.swing.JFrame {
                         .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSend, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(35, 35, 35)
                         .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(47, 47, 47)
@@ -464,7 +604,7 @@ public class Index extends javax.swing.JFrame {
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSend, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(72, Short.MAX_VALUE))
@@ -719,6 +859,111 @@ public class Index extends javax.swing.JFrame {
        
     }//GEN-LAST:event_btnCreateNewWalletInDialogActionPerformed
 
+    private void btnOkInDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkInDialogActionPerformed
+        // TODO add your handling code here:
+        HandlerFile hf = new HandlerFile();
+        if(!hf.ReadFileConfig()){
+            if(hf.createNewFolder("C:\\ExpectedCoinWallet")){
+                if(hf.createNewFile("C:\\ExpectedCoinWallet\\configWallet.bin")){
+                    if(!textPublicKeyInDialog.getText().equals("")){
+                        Config configWallet = new Config(textPublicKeyInDialog.getText(),"123",true);
+                        if(hf.WriteFileConfig(configWallet)){
+                            jDialog1.dispose();
+                        }
+                    }
+                    
+                }
+            }
+            
+        }
+        
+    }//GEN-LAST:event_btnOkInDialogActionPerformed
+
+    private void btnCancelInDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelInDialogActionPerformed
+        // TODO add your handling code here:
+        jDialog1.dispose();
+    }//GEN-LAST:event_btnCancelInDialogActionPerformed
+
+    private void BtnSavePrivateKeyInDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSavePrivateKeyInDialogActionPerformed
+        // TODO add your handling code here:
+        JFileChooser dir = new JFileChooser();
+        dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+        dir.showSaveDialog(null);
+        
+    //    txtSaveLocationOfBlockchain.setText(dir.getSelectedFile().toString());        
+    }//GEN-LAST:event_BtnSavePrivateKeyInDialogActionPerformed
+
+    private void btnImportWalletInDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportWalletInDialogActionPerformed
+        // TODO add your handling code here:
+        JFileChooser dir = new JFileChooser();
+        dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+        dir.showSaveDialog(null);        
+    }//GEN-LAST:event_btnImportWalletInDialogActionPerformed
+
+    private void btnChoseAddressToSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChoseAddressToSendActionPerformed
+        // TODO add your handling code here:
+        HandlerFile hf = new HandlerFile();
+        JFileChooser file = new JFileChooser();
+        //dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+        int re= file.showOpenDialog(null);   
+        if(re==JFileChooser.APPROVE_OPTION){
+            String filename = file.getSelectedFile().getName();
+            String dir = file.getCurrentDirectory().toString();
+            txtAddressReceiver.setText(hf.readFile(dir+"\\"+filename));
+            
+        }
+        
+    }//GEN-LAST:event_btnChoseAddressToSendActionPerformed
+
+    private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
+        // TODO add your handling code here:
+        jDialog2.setVisible(true);
+    }//GEN-LAST:event_btnSendActionPerformed
+
+    private void btnSendInDialogSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendInDialogSendActionPerformed
+        // TODO add your handling code here:
+        HandlerFile hf = new HandlerFile();
+        float value = (float) jSpinnerAmount.getValue();
+        System.out.println(jSpinnerAmount.getValue());
+        if(hf.ReadFileConfig()){
+           HandlerWallet hw = new HandlerWallet(OtherPeers, myUTXO,hf.getConfig().getAddressWallet(),txtAddressReceiver.getText(),value); 
+           hw.initBeforeSendFunds();
+           if(hw.generateSignature(textPrivateKeyInDialogSend.getText())){
+               
+               try {
+                   hw.Send();
+                   jDialog2.dispose();
+               } catch (RemoteException ex) {
+                   System.out.println("Ko gui dc");
+                   Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+               }
+           }
+
+        }
+        
+    //jSpinnerAmount.getValue();
+        
+    }//GEN-LAST:event_btnSendInDialogSendActionPerformed
+
+    private void btnCancelInDialogSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelInDialogSendActionPerformed
+        // TODO add your handling code here:
+        jDialog2.dispose();
+    }//GEN-LAST:event_btnCancelInDialogSendActionPerformed
+
+    private void btnChosePrivateKeyInDialogSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChosePrivateKeyInDialogSendActionPerformed
+        // TODO add your handling code here:
+        HandlerFile hf = new HandlerFile();
+        JFileChooser file = new JFileChooser();
+        //dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+        int re= file.showOpenDialog(null);   
+        if(re==JFileChooser.APPROVE_OPTION){
+            String filename = file.getSelectedFile().getName();
+            String dir = file.getCurrentDirectory().toString();
+            textPrivateKeyInDialogSend.setText(hf.readFile(dir+"\\"+filename));
+            
+        }        
+    }//GEN-LAST:event_btnChosePrivateKeyInDialogSendActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -757,17 +1002,20 @@ public class Index extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnSavePrivateKeyInDialog;
     private javax.swing.JButton btnCancelInDialog;
+    private javax.swing.JToggleButton btnCancelInDialogSend;
+    private javax.swing.JButton btnChoseAddressToSend;
+    private javax.swing.JButton btnChosePrivateKeyInDialogSend;
     private javax.swing.JButton btnCreateNewWallet;
     private javax.swing.JButton btnCreateNewWalletInDialog;
     private javax.swing.JButton btnImportWalletInDialog;
     private javax.swing.JButton btnOkInDialog;
+    private javax.swing.JButton btnSend;
+    private javax.swing.JToggleButton btnSendInDialogSend;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
@@ -775,6 +1023,7 @@ public class Index extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBox5;
     private javax.swing.JComboBox<String> jComboBox6;
     private javax.swing.JDialog jDialog1;
+    private javax.swing.JDialog jDialog2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
@@ -794,6 +1043,7 @@ public class Index extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -808,22 +1058,24 @@ public class Index extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JSpinner jSpinner4;
+    private javax.swing.JSpinner jSpinnerAmount;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
     private javax.swing.JLabel lbAvaliable;
     private javax.swing.JLabel lbPending;
     private javax.swing.JLabel lbTotal;
     private javax.swing.JTextArea textPrivateKeyInDialog;
+    private javax.swing.JTextArea textPrivateKeyInDialogSend;
     private javax.swing.JTextArea textPublicKeyInDialog;
+    private javax.swing.JTextField txtAddressReceiver;
     // End of variables declaration//GEN-END:variables
 }

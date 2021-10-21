@@ -12,36 +12,30 @@ import java.io.Serializable;
  * @author Admin
  */
 public class Config implements Serializable {
-    private String LocationSaveBlockchain; // vi tri luu file chua blockchain
-    private String RewardAddressWallet; // Dia chi vi nhan thuong
+    private String AddressWallet; // Dia chi vi nhan thuong
     private String Password; //  Mat khau de truy cap vao phan mem neu can
-    private boolean IsBlockchainReady; // trang thai cua blockchain da co du lieu hay chua
+    private boolean IsWalletReady; // trang thai cua wallet da co dia chi vi hay chua
 
-    public Config(String LocationSaveBlockchain, String RewardAddressWallet, String Password, boolean IsBlockchainReady) {
-        this.LocationSaveBlockchain = LocationSaveBlockchain;
-        this.RewardAddressWallet = RewardAddressWallet;
+    public Config(String AddressWallet, String Password, boolean IsBlockchainReady) {
+        this.AddressWallet = AddressWallet;
         this.Password = Password;
-        this.IsBlockchainReady = IsBlockchainReady;
+        this.IsWalletReady = IsWalletReady;
     }
 
-    public String getLocationSaveBlockchain() {
-        return LocationSaveBlockchain;
-    }
-
-    public String getRewardAddressWallet() {
-        return RewardAddressWallet;
+    public String getAddressWallet() {
+        return AddressWallet;
     }
 
     public String getPassword() {
         return Password;
     }
 
-    public boolean isIsBlockchainReady() {
-        return IsBlockchainReady;
+    public boolean getIsWalletReady() {
+        return IsWalletReady;
     }
 
-    public void setIsBlockchainReady(boolean IsBlockchainReady) {
-        this.IsBlockchainReady = IsBlockchainReady;
+    public void setIsWalletReady(boolean IsWalletReady) {
+        this.IsWalletReady = IsWalletReady;
     }
     
 }
