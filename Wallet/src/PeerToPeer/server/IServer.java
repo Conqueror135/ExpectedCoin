@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import mncoin.TransactionInput;
 import mncoin.TransactionOutput;
-import org.json.JSONObject;
+
 
 /**
  *
@@ -31,7 +31,7 @@ public interface IServer extends Remote{
     public void setIsHandlingGetBlocks() throws RemoteException;
     public int getNumberOfBlocks() throws RemoteException; // lay so luong cua cac block trong blockchain
     public boolean updateBlockchain(Block block) throws RemoteException;
-    public boolean handlerTransactions(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient,  float TotalValue, float value, JSONObject Signature, String CreateTime) throws RemoteException;
+    public boolean handlerTransactions(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient,  float TotalValue, float value, String Signature,String Algorithm, String CreateTime) throws RemoteException;
     public ArrayList<TransactionOutput> getBalance(String PublicKey) throws RemoteException;
     // end Blockchain
 }

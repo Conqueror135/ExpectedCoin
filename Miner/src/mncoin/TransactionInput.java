@@ -5,11 +5,13 @@
  */
 package mncoin;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Admin
  */
-public class TransactionInput {
+public class TransactionInput implements Serializable {
     public String transactionOutputId; //Reference to TransactionOutputs -> transactionId
     public TransactionOutput UTXO; //Contains the Unspent transaction output
 

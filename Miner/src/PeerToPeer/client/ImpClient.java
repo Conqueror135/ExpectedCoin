@@ -14,6 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import mncoin.TransactionInput;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -71,7 +72,9 @@ public class ImpClient extends UnicastRemoteObject implements IClient{
     public boolean sendNewBlockToOtherPeer(Block block) throws RemoteException{
         return server.updateBlockchain(block);
     }
-    public boolean sendTransactionToOtherPeer(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient, float TotalValue, float value, JSONObject Signature, String CreateTime) throws RemoteException{
-        return server.handlerTransactions(inputs,PubSender, PubRecipient, TotalValue, value, Signature, CreateTime);
+    public boolean sendTransactionToOtherPeer(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient, float TotalValue, float value, JSONObject Signature, String CreateTime) throws RemoteException, JSONException{
+        String Sig = Signature.getString("signature");
+        String Algorithm = Signature.getString("algorithm");
+        return server.handlerTransactions(inputs,PubSender, PubRecipient, TotalValue, value, Sig,Algorithm, CreateTime);
     }
 }

@@ -895,9 +895,16 @@ public class Index extends javax.swing.JFrame {
 
     private void btnImportWalletInDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportWalletInDialogActionPerformed
         // TODO add your handling code here:
-        JFileChooser dir = new JFileChooser();
-        dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
-        dir.showSaveDialog(null);        
+        HandlerFile hf = new HandlerFile();
+        JFileChooser file = new JFileChooser();
+        //dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+        int re= file.showOpenDialog(null);   
+        if(re==JFileChooser.APPROVE_OPTION){
+            String filename = file.getSelectedFile().getName();
+            String dir = file.getCurrentDirectory().toString();
+            textPublicKeyInDialog.setText(hf.readFile(dir+"\\"+filename));
+            System.out.println(dir+"\\"+filename);
+        }       
     }//GEN-LAST:event_btnImportWalletInDialogActionPerformed
 
     private void btnChoseAddressToSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChoseAddressToSendActionPerformed

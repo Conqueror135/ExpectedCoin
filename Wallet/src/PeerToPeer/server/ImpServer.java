@@ -210,7 +210,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     }
 
     @Override
-    public boolean handlerTransactions(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient,  float TotalValue, float value, JSONObject Signature, String CreateTime) throws RemoteException {
+    public boolean handlerTransactions(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient,  float TotalValue, float value, String Signature,String Algorithm, String CreateTime) throws RemoteException {
 //        ArrayList<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
 //        String planttext = PubSender+ PubRecipient+ String.valueOf(TotalValue)+CreateTime;
 //        String transactionId="";

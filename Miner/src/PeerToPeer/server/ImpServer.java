@@ -167,6 +167,13 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     public boolean updateBlockchain(Block block) throws RemoteException {
         int newIndex = Integer.parseInt(block.getIndex());
     //    Block[] blocks = new Block[newIndex];
+        for(Transaction tran : block.getTrans()){
+            for(TransactionOutput out : tran.getOutputs()){
+                                //    transactionId = Calculator.stringHash(planttext);
+//                                System.out.println(out.toString());
+                this.UTXOs.put(out.id, out);
+            }
+        }    
         HandlerFile hf = new HandlerFile();
         if(hf.ReadFileConfig()){
             if(blocks.size()>0){
@@ -183,6 +190,15 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     }
     public boolean updateNewBlockInMyself(Block block){
         HandlerFile hf = new HandlerFile();
+        if(block.getTrans()!=null)
+        for(Transaction tran : block.getTrans()){
+            for(TransactionOutput out : tran.getOutputs()){
+                                //    transactionId = Calculator.stringHash(planttext);
+//                                System.out.println(out.toString());
+                this.UTXOs.put(out.id, out);
+            }
+        }
+        
         if(hf.ReadFileConfig()){
             if(blocks.size()>0){
                 blocks.add(block);
@@ -209,10 +225,20 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     }
 
     @Override
-    public boolean handlerTransactions(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient,  float TotalValue, float value, JSONObject Signature, String CreateTime) throws RemoteException {
+    public boolean handlerTransactions(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient,  float TotalValue, float value,String Signature,String Algorithm, String CreateTime) throws RemoteException {
+        System.out.println("wallet id sending transaction!");
         ArrayList<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
         String planttext = PubSender+ PubRecipient+ String.valueOf(TotalValue)+CreateTime;
         String transactionId="";
+        JSONObject sig = new JSONObject();
+        try {
+            sig.put("publicKey", PubSender);
+            sig.put("signature", Signature);
+            sig.put("algorithm", Algorithm);            
+        } catch (JSONException ex) {
+            Logger.getLogger(ImpServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         try {
             transactionId = Calculator.stringHash(planttext);
         } catch (NoSuchAlgorithmException ex) {
@@ -222,7 +248,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
         
         
         try {
-            if(!DigiSig.Verify(Signature, planttext)){ 
+            if(!DigiSig.Verify(sig, planttext)){ 
                 System.out.println("Chu ky ko hop le!");
                 return false;
             }
@@ -248,7 +274,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
 	}        
         try {
             //UTXOs.put(output.id, output);
-            WaitingTransaction.add(new Transaction(PubSender, PubRecipient, CreateTime, DigiSig.getSignature(Signature), value, outputs.toArray(new TransactionOutput[outputs.size()] )));
+            WaitingTransaction.add(new Transaction(PubSender, PubRecipient, CreateTime, DigiSig.getSignature(sig), value, outputs.toArray(new TransactionOutput[outputs.size()] )));
         } catch (JSONException ex){
             System.out.println("loi add waiting transaction!");
             return false;

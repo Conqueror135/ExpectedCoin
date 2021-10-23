@@ -241,7 +241,7 @@ public class InitialSetting extends javax.swing.JFrame {
                     
                 }
                 if(hf.createNewFile(LocationSaveBlockchain+"\\EPC\\Blocks.bin"))
-                    if(hf.createNewFolder("D:/ExpectedCoinMiner")){// tao foder ExpectedCoinMiner trong o C
+                    if(hf.createNewFolder("C:/ExpectedCoinMiner")){// tao foder ExpectedCoinMiner trong o C
                         Config config = new Config(LocationSaveBlockchain+"\\EPC\\", AddressWallet, Password, false);
                         if(hf.WriteFileConfig(config)){
                             this.dispose();

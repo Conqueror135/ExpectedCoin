@@ -73,7 +73,11 @@ public class HandlerWallet {
     }
     public boolean Send() throws RemoteException{
         for(ImpClient otherPeer : OtherPeers){
-            otherPeer.sendTransactionToOtherPeer(inputs,PubSender, PubRecipient, TotalValue, value, Signature, CreateTime);
+            try {
+                otherPeer.sendTransactionToOtherPeer(inputs,PubSender, PubRecipient, TotalValue, value, Signature, CreateTime);
+            } catch (JSONException ex) {
+                Logger.getLogger(HandlerWallet.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return true;
     }
