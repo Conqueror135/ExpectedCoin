@@ -146,10 +146,10 @@ public class HandlerFile {
             return false;
         }               
     }
-    public boolean writeFile(String path){
+    public boolean writeFile(String path, String Content){
         try {
-            FileWriter fw = new FileWriter("D:\\testout.txt");
-            fw.write("Welcome to java.");
+            FileWriter fw = new FileWriter(path);
+            fw.write(Content);
             fw.close();
             return true;
         } catch (Exception e) {
@@ -176,6 +176,25 @@ public class HandlerFile {
         }
         return re;
     }
+    public boolean writeFileType2(File file, String s){
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        DataOutputStream outputStream = new DataOutputStream(fileOutputStream);
+         
+        try {
+            outputStream.writeUTF(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+         
+        return true;
+    }    
     public Block[] getBlocks() {
         return blocks;
     }

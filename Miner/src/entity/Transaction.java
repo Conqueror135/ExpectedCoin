@@ -5,7 +5,9 @@
  */
 package entity;
 
+import common.Calculator;
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import mncoin.TransactionInput;
 import mncoin.TransactionOutput;
@@ -15,6 +17,7 @@ import mncoin.TransactionOutput;
  * @author Admin
  */
 public class Transaction implements Serializable{
+    private String Id;
     private String Sender;// Dia chi vi cua nguoi gui
     private String Receiver;// Dia chi vi cua nguoi nhan
     private String CreateTime;
@@ -22,7 +25,8 @@ public class Transaction implements Serializable{
     private float value;// So luong coin gui di
     private TransactionOutput[] Outputs;
 
-    public Transaction(String Sender, String Receiver, String CreateTime, String Signature, float value, TransactionOutput[] Outputs) {
+    public Transaction(String Sender, String Receiver, String CreateTime, String Signature, float value, TransactionOutput[] Outputs) throws NoSuchAlgorithmException {
+        this.Id= Calculator.stringHash(Sender+Receiver+CreateTime+Signature);
         this.Sender = Sender;
         this.Receiver = Receiver;
         this.CreateTime = CreateTime;

@@ -25,7 +25,7 @@ public class TransactionOutput implements Serializable  {
 		this.recipient = recipient;
 		this.value = value;
 		this.parentTransactionId = parentTransactionId;
-		this.id = Calculator.stringHash(recipient+Float.toString(value)+parentTransactionId);
+		this.id = Calculator.stringHash(recipient+Float.toString(value)+parentTransactionId+java.time.LocalDateTime.now().toString());
 	}
 	
 	//Check if coin belongs to you

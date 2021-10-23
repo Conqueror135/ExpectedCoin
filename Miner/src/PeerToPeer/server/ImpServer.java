@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import mncoin.MnCoin;
 import mncoin.TransactionInput;
 import mncoin.TransactionOutput;
 import org.json.JSONException;
@@ -47,6 +48,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     private boolean IsCreatingBlock;
     private  Map<String,TransactionOutput> UTXOs ;
     private ArrayList<Transaction> WaitingTransaction;
+    private boolean IsBlockCreated;
     
     public ImpServer(ArrayList<ImpClient> peers, ArrayList<String> otherPeers) throws RemoteException{
         this.isReadyToDownloadBlocks= false;
@@ -55,6 +57,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
         this.IsCreatingBlock = false;
         this.WaitingTransaction = new ArrayList<Transaction>();
         this.UTXOs = new HashMap<String,TransactionOutput>();
+        this.IsBlockCreated = false;
         HandlerFile hf = new HandlerFile();
         if(hf.ReadFileConfig()){
             if(hf.getConfig().isIsBlockchainReady()){
@@ -166,7 +169,20 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     @Override
     public boolean updateBlockchain(Block block) throws RemoteException {
         int newIndex = Integer.parseInt(block.getIndex());
-    //    Block[] blocks = new Block[newIndex];
+        try {
+            if(! MnCoin.isValidBlock(TopBlock, block)){// kiem tra xem block moi co hop le hay ko
+                System.out.println("block ko hop le");
+                return false;
+            }
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(ImpServer.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        this.IsBlockCreated= true;
+        if(block.getTrans().length>1&&WaitingTransaction.size()>1){
+            for(int i=block.getTrans().length-1;i>=0;i--)
+                WaitingTransaction.remove(i); // xoá các giao dịch trong bang tam sau khi tạo block thành công!
+        }
         for(Transaction tran : block.getTrans()){
             for(TransactionOutput out : tran.getOutputs()){
                                 //    transactionId = Calculator.stringHash(planttext);
@@ -189,6 +205,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
         return false;
     }
     public boolean updateNewBlockInMyself(Block block){
+            
         HandlerFile hf = new HandlerFile();
         if(block.getTrans()!=null)
         for(Transaction tran : block.getTrans()){
@@ -198,7 +215,11 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
                 this.UTXOs.put(out.id, out);
             }
         }
-        
+        if(block.getTrans().length>1&&WaitingTransaction.size()>1){
+            for(int i=block.getTrans().length-1;i>=0;i--)
+                WaitingTransaction.remove(i); // xoá các giao dịch trong bang tam sau khi tạo block thành công!
+        }
+        System.out.println("size transaction: "+WaitingTransaction.size());
         if(hf.ReadFileConfig()){
             if(blocks.size()>0){
                 blocks.add(block);
@@ -224,11 +245,20 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
         return IsCreatingBlock;
     }
 
+    public boolean getIsBlockCreated() {
+        return IsBlockCreated;
+    }
+
+    public void setIsBlockCreated(boolean IsBlockCreated) {
+        this.IsBlockCreated = IsBlockCreated;
+    }
+    
+
     @Override
     public boolean handlerTransactions(ArrayList<TransactionInput> inputs, String PubSender, String PubRecipient,  float TotalValue, float value,String Signature,String Algorithm, String CreateTime) throws RemoteException {
         System.out.println("wallet id sending transaction!");
         ArrayList<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
-        String planttext = PubSender+ PubRecipient+ String.valueOf(TotalValue)+CreateTime;
+        String planttext = PubSender+ PubRecipient+ String.valueOf(value)+CreateTime;
         String transactionId="";
         JSONObject sig = new JSONObject();
         try {
@@ -277,6 +307,9 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
             WaitingTransaction.add(new Transaction(PubSender, PubRecipient, CreateTime, DigiSig.getSignature(sig), value, outputs.toArray(new TransactionOutput[outputs.size()] )));
         } catch (JSONException ex){
             System.out.println("loi add waiting transaction!");
+            return false;
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(ImpServer.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
 

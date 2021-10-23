@@ -55,7 +55,7 @@ public class PoW{
         newBlock.setMerkleRootHash(cal.calculateMerkleRootHash(newBlock.getTrans()));
         
         for(long i=0; ; i++){
-            if(IsStoped)
+            if(IsStoped|| impServer.getIsBlockCreated())
                 break;
             String hex = String.format("%x", i);
             newBlock.setNonce(hex);
@@ -65,7 +65,7 @@ public class PoW{
                 break;
             }
         }
-        if(!IsStoped){
+        if(!IsStoped&&!impServer.getIsBlockCreated()){
             System.out.println("NewBlock : "+newBlock.getHeaderHash()+" "+newBlock.getNonce());
             
             impServer.setIsCreatingBlock(false);
@@ -77,6 +77,7 @@ public class PoW{
                 }
             }
             impServer.updateNewBlockInMyself(newBlock);
+            impServer.setIsBlockCreated(false);
         }
     }
     	private static String repeat(String str, int repeat) {

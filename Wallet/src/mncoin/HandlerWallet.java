@@ -71,7 +71,7 @@ public class HandlerWallet {
             return false;
         }
     }
-    public boolean Send() throws RemoteException{
+    public boolean Send() throws RemoteException, JSONException{
         for(ImpClient otherPeer : OtherPeers){
             otherPeer.sendTransactionToOtherPeer(inputs,PubSender, PubRecipient, TotalValue, value, Signature, CreateTime);
         }

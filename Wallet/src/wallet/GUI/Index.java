@@ -8,13 +8,16 @@ package wallet.GUI;
 import PeerToPeer.client.ImpClient;
 import common.DigiSig;
 import common.HandlerFile;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import mncoin.HandlerWallet;
 import mncoin.TransactionOutput;
+import org.json.JSONException;
 import system.Config;
 
 /**
@@ -875,6 +878,11 @@ public class Index extends javax.swing.JFrame {
                 }
             }
             
+        }else{
+            Config configWallet = new Config(textPublicKeyInDialog.getText(),"123",true);
+            if(hf.WriteFileConfig(configWallet)){
+                jDialog1.dispose();
+            }            
         }
         
     }//GEN-LAST:event_btnOkInDialogActionPerformed
@@ -886,11 +894,27 @@ public class Index extends javax.swing.JFrame {
 
     private void BtnSavePrivateKeyInDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSavePrivateKeyInDialogActionPerformed
         // TODO add your handling code here:
-        JFileChooser dir = new JFileChooser();
-        dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
-        dir.showSaveDialog(null);
-        
-    //    txtSaveLocationOfBlockchain.setText(dir.getSelectedFile().toString());        
+        if(!textPrivateKeyInDialog.getText().equals("")){
+            HandlerFile hf = new HandlerFile();
+            JFileChooser file = new JFileChooser();
+            //dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+            int re= file.showSaveDialog(null);   
+            if(re==JFileChooser.APPROVE_OPTION){
+                String filename = file.getSelectedFile().getName();
+                String dir = file.getCurrentDirectory().toString();
+                File sfile = file.getSelectedFile();
+                if( ! hf.writeFileType2(sfile, textPrivateKeyInDialog.getText())){
+                    JOptionPane.showMessageDialog(null, "Lỗi lưu file", "Thông báo", JOptionPane.CLOSED_OPTION);
+                }else{
+                    JOptionPane.showMessageDialog(null,"Đã lưu thành công!","Success!",JOptionPane.INFORMATION_MESSAGE);
+                }            
+//                if(hf.createNewFile(hf.readFile(dir+"\\"+filename))){
+//                    if(hf.writeFile(hf.readFile(dir+"\\"+filename), textPrivateKeyInDialog.getText())){
+//                        JOptionPane.showMessageDialog(null,"Đã lưu thành công!","Success!",JOptionPane.INFORMATION_MESSAGE);
+//                    }
+//                }
+            }              
+        }   
     }//GEN-LAST:event_BtnSavePrivateKeyInDialogActionPerformed
 
     private void btnImportWalletInDialogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportWalletInDialogActionPerformed
@@ -930,7 +954,7 @@ public class Index extends javax.swing.JFrame {
     private void btnSendInDialogSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendInDialogSendActionPerformed
         // TODO add your handling code here:
         HandlerFile hf = new HandlerFile();
-        float value = (float) jSpinnerAmount.getValue();
+        float value = Float.parseFloat( jSpinnerAmount.getValue().toString());
         System.out.println(jSpinnerAmount.getValue());
         if(hf.ReadFileConfig()){
            HandlerWallet hw = new HandlerWallet(OtherPeers, myUTXO,hf.getConfig().getAddressWallet(),txtAddressReceiver.getText(),value); 
@@ -942,6 +966,8 @@ public class Index extends javax.swing.JFrame {
                    jDialog2.dispose();
                } catch (RemoteException ex) {
                    System.out.println("Ko gui dc");
+                   Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+               } catch (JSONException ex) {
                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
                }
            }

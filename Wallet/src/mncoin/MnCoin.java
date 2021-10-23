@@ -14,18 +14,14 @@ import java.security.NoSuchAlgorithmException;
  * @author Admin
  */
 public class MnCoin {
-    Calculator cal ;
-
-    public MnCoin() {
-        this.cal = new Calculator();
-    }
-    
-    public boolean isValidBlock(Block oldBlock, Block newBlock) throws NoSuchAlgorithmException{
-        if(newBlock.getIndex()!= oldBlock.getIndex()+1){// kiem tra xem chieu dai cau block moi cos hop le khong
+ 
+    public static boolean isValidBlock(Block oldBlock, Block newBlock) throws NoSuchAlgorithmException{
+        Calculator cal=new Calculator();
+        if(Integer.parseInt(newBlock.getIndex()) != Integer.parseInt(oldBlock.getIndex())+1){// kiem tra xem chieu dai cau block moi cos hop le khong
             return false;
-        }else if(newBlock.getPreviousHeaderHash()!= oldBlock.getHeaderHash()){// kiem tra xem getPreviousHeaderHash co hop le khong
+        }else if(!newBlock.getPreviousHeaderHash().equals(oldBlock.getHeaderHash())){// kiem tra xem getPreviousHeaderHash co hop le khong
             return false;
-        }else if(cal.calculateMerkleRootHash(newBlock.getTrans()) != newBlock.getMerkleRootHash()){ // tra xem du lieu giao dich co bi thay doi khong
+        }else if(!cal.calculateMerkleRootHash(newBlock.getTrans()).equals(newBlock.getMerkleRootHash()) ){ // tra xem du lieu giao dich co bi thay doi khong
             return false;
         }
         return true;
