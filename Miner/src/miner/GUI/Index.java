@@ -6,6 +6,8 @@
 package miner.GUI;
 
 import PeerToPeer.client.ImpClient;
+import PeerToPeer.server.ImpServer;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import miner.PoW;
 
@@ -19,13 +21,25 @@ public class Index extends javax.swing.JFrame {
      * Creates new form Index
      */
     private ArrayList<ImpClient> OtherPeers;
+    private ImpServer impServer;
     private boolean IsStopMining;
-    public Index(ArrayList<ImpClient> OtherPeers) {
+    public Index(ArrayList<ImpClient> OtherPeers, ImpServer impServer) {
         this.OtherPeers = OtherPeers;
+        this.impServer = impServer;
         this.IsStopMining = true;
         initComponents();
     }
-    
+    void checkLengthBlockchain() throws RemoteException{
+        for(ImpClient otherPeer:OtherPeers){
+            int cSize = impServer.getNumberOfBlocks();
+            int nSize = otherPeer.getNumberOfBlocksFromOtherPeer();
+            if(cSize< nSize){
+               for(int i = cSize; i< nSize; i++){
+                   impServer.updateNewBlockInMyself(otherPeer.getBlockFromOtherPeers(i));
+               }
+            }
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -383,6 +397,10 @@ public class Index extends javax.swing.JFrame {
     private void btnStartOrStopMiningActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartOrStopMiningActionPerformed
         // TODO add your handling code here:
         this.IsStopMining = !IsStopMining;
+        if(IsStopMining)
+            btnStartOrStopMining.setText("Start up");
+        else
+            btnStartOrStopMining.setText("Stop");        
         System.out.println("btnStart");
 //        if(!IsStopMining){
 ////            PoW pow = new Pow()

@@ -85,6 +85,7 @@ public class Process extends javax.swing.JFrame {
                 newConfig.setIsBlockchainReady(true);
                 hf.WriteFileConfig(newConfig);
             }
+            JOptionPane.showMessageDialog(null,"Cài đặt thành công, hãy khởi động lại chương trình!","Success!",JOptionPane.INFORMATION_MESSAGE);
             btnNext.setEnabled(true);        
         }else{
             JOptionPane.showMessageDialog(null,"Đã xãy ra lỗi lưu trữ!","Lỗi!",JOptionPane.ERROR_MESSAGE);
@@ -113,7 +114,7 @@ public class Process extends javax.swing.JFrame {
         jLabel1.setText("Đang tải bản sao của Blockchain");
 
         btnNext.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnNext.setText("Next >>");
+        btnNext.setText("Reset");
         btnNext.setEnabled(false);
         btnNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -36,7 +36,7 @@ public class Miner {
         ArrayList<ImpClient> OtherPeers = myself.getPeers(); // lay ket noi voi cac peer khac trong mang
         ImpServer impServer = myself.getServer();
         HandlerFile hf = new HandlerFile(); // khoi tao class xu ly file ( doc, ghi file và tao folder)
-        Index indexGui = new Index(OtherPeers);
+        Index indexGui = new Index(OtherPeers, impServer);
         
         if(hf.ReadFileConfig()==false){ // kiem tra xem may tinh da khoi tao cai dat ban dau chua, neu chua thi hien form de khoi tao cai dat
             InitialSetting init = new InitialSetting(myself, OtherPeers);
@@ -44,7 +44,7 @@ public class Miner {
         }else{
 //            hf.ReadFileConfig();
             Config config = hf.getConfig();
-            System.out.println(config.getLocationSaveBlockchain()+" "+config.getLocationSaveBlockchain());            
+        //    System.out.println(config.getLocationSaveBlockchain()+" "+config.getLocationSaveBlockchain());            
             indexGui.setVisible(true);
 //            while(true){
 //                if()
