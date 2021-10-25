@@ -36,6 +36,11 @@ public class Miner {
         ArrayList<ImpClient> OtherPeers = myself.getPeers(); // lay ket noi voi cac peer khac trong mang
         ImpServer impServer = myself.getServer();
         HandlerFile hf = new HandlerFile(); // khoi tao class xu ly file ( doc, ghi file và tao folder)
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Miner.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Index indexGui = new Index(OtherPeers, impServer);
         
         if(hf.ReadFileConfig()==false){ // kiem tra xem may tinh da khoi tao cai dat ban dau chua, neu chua thi hien form de khoi tao cai dat
@@ -65,6 +70,7 @@ public class Miner {
                     TransactionOutput[] transReward= {new TransactionOutput(walletReward, reward, "EPC")};
                     DataTransaction.add(new Transaction(TopBlock.getCore().getSystemAddress(),walletReward,TimeCreate,"EPC", reward, transReward));
                     Transaction[] trans = DataTransaction.toArray(new Transaction[impServer.getWaitingTransaction().size()]);
+                    System.out.println("trán "+trans.length);
                     impServer.setIsCreatingBlock(true);
                     
                 //    System.out.println(TopBlock.getNonce());
@@ -78,6 +84,9 @@ public class Miner {
                     } catch (NoSuchAlgorithmException ex) {
                         Logger.getLogger(Miner.class.getName()).log(Level.SEVERE, null, ex);
                     }
+//                    if(DataTransaction.size()>0){
+//                        DataTransaction.remove(DataTransaction.size()-1);
+//                    }
                 }
                 try {
                     Thread.sleep(1000);

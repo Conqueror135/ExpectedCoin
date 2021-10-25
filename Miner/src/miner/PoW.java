@@ -68,7 +68,6 @@ public class PoW{
         if(!IsStoped&&!impServer.getIsBlockCreated()){
             System.out.println("NewBlock : "+newBlock.getHeaderHash()+" "+newBlock.getNonce());
             
-            impServer.setIsCreatingBlock(false);
             for(int j=0; j < OtherPeers.size(); j++){
                 try {
                     OtherPeers.get(j).sendNewBlockToOtherPeer(newBlock);
@@ -76,7 +75,8 @@ public class PoW{
                     System.out.println("ko gui dc block");
                 }
             }
-            impServer.updateNewBlockInMyself(newBlock);
+            impServer.updateNewBlockInMyself(newBlock);            
+            impServer.setIsCreatingBlock(false);
             impServer.setIsBlockCreated(false);
         }
     }

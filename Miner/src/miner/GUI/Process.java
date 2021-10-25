@@ -85,8 +85,9 @@ public class Process extends javax.swing.JFrame {
                 newConfig.setIsBlockchainReady(true);
                 hf.WriteFileConfig(newConfig);
             }
+            btnNext.setEnabled(true);  
             JOptionPane.showMessageDialog(null,"Cài đặt thành công, hãy khởi động lại chương trình!","Success!",JOptionPane.INFORMATION_MESSAGE);
-            btnNext.setEnabled(true);        
+                  
         }else{
             JOptionPane.showMessageDialog(null,"Đã xãy ra lỗi lưu trữ!","Lỗi!",JOptionPane.ERROR_MESSAGE);
         }

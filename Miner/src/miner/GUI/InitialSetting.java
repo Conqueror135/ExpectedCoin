@@ -51,7 +51,7 @@ public class InitialSetting extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         txtAddressWallet = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        btnReadFileAddressReward = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         txtConfirmPassword = new javax.swing.JPasswordField();
         txtPassword = new javax.swing.JPasswordField();
@@ -82,8 +82,13 @@ public class InitialSetting extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Address Wallet to Receive  Reward :");
 
-        jButton2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jButton2.setText("Browser");
+        btnReadFileAddressReward.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnReadFileAddressReward.setText("Browser");
+        btnReadFileAddressReward.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReadFileAddressRewardActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel4.setText("Password Setting :");
@@ -111,7 +116,7 @@ public class InitialSetting extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton1)
-                            .addComponent(jButton2))))
+                            .addComponent(btnReadFileAddressReward))))
                 .addContainerGap(20, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(47, 47, 47)
@@ -138,7 +143,7 @@ public class InitialSetting extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtAddressWallet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
+                    .addComponent(btnReadFileAddressReward))
                 .addGap(33, 33, 33)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
@@ -258,6 +263,20 @@ public class InitialSetting extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnOkActionPerformed
 
+    private void btnReadFileAddressRewardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReadFileAddressRewardActionPerformed
+        // TODO add your handling code here:
+        HandlerFile hf = new HandlerFile();
+        JFileChooser file = new JFileChooser();
+        //dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+        int re= file.showOpenDialog(null);   
+        if(re==JFileChooser.APPROVE_OPTION){
+            String filename = file.getSelectedFile().getName();
+            String dir = file.getCurrentDirectory().toString();
+            txtAddressWallet.setText(hf.readFile(dir+"\\"+filename));
+            System.out.println(dir+"\\"+filename);
+        }         
+    }//GEN-LAST:event_btnReadFileAddressRewardActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -297,8 +316,8 @@ public class InitialSetting extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExit;
     private javax.swing.JButton btnOk;
+    private javax.swing.JButton btnReadFileAddressReward;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

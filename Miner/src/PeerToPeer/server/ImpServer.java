@@ -81,15 +81,11 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
                         if(block.getTrans()!=null)
                         for(Transaction tran : block.getTrans()){
                             for(TransactionOutput out : tran.getOutputs()){
-                                //    transactionId = Calculator.stringHash(planttext);
-//                                System.out.println(out.toString());
                                 this.UTXOs.put(out.id, out);
                             }
                         }
                     }                    
                 }                
-
-
             }
         }
     }
@@ -106,7 +102,7 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
     // Handle Blockchain
     @Override
     public Block getBlock(int index) throws RemoteException {
-        System.out.println("getblock "+blocks.size()+"  " + blocks.get(index).getNonce());
+        System.out.println("getblock "+index+"  " + blocks.get(index).getNonce());
         return blocks.get(index);
     }
 
@@ -179,14 +175,13 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
             return false;
         }
         this.IsBlockCreated= true;
+        this.TopBlock = block;
         if(block.getTrans().length>1&&WaitingTransaction.size()>1){
-            for(int i=block.getTrans().length-1;i>=0;i--)
+            for(int i=block.getTrans().length-2;i>=0;i--)
                 WaitingTransaction.remove(i); // xoá các giao dịch trong bang tam sau khi tạo block thành công!
         }
         for(Transaction tran : block.getTrans()){
             for(TransactionOutput out : tran.getOutputs()){
-                                //    transactionId = Calculator.stringHash(planttext);
-//                                System.out.println(out.toString());
                 this.UTXOs.put(out.id, out);
             }
         }    
@@ -210,12 +205,11 @@ public class ImpServer extends UnicastRemoteObject implements IServer{
         if(block.getTrans()!=null)
         for(Transaction tran : block.getTrans()){
             for(TransactionOutput out : tran.getOutputs()){
-                                //    transactionId = Calculator.stringHash(planttext);
-//                                System.out.println(out.toString());
                 this.UTXOs.put(out.id, out);
             }
         }
-        if(block.getTrans().length>1&&WaitingTransaction.size()>1){
+        this.TopBlock = block;
+        if(block.getTrans().length>0&&WaitingTransaction.size()>0){
             for(int i=block.getTrans().length-1;i>=0;i--)
                 WaitingTransaction.remove(i); // xoá các giao dịch trong bang tam sau khi tạo block thành công!
         }

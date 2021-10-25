@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -67,6 +68,7 @@ public class HandlerFile {
           return false;
        } 
     }
+    
     public boolean WriteFileConfig(Config config){
         try {
             ObjectOutputStream oos;
@@ -144,6 +146,25 @@ public class HandlerFile {
             return false;
         }               
     }
+    public String readFile(String path){
+        String re="";
+        FileReader fr;
+        try {
+            fr = new FileReader(path);
+            int i;
+            while ((i = fr.read()) != -1) {
+                System.out.print((char) i);
+                re+=String.valueOf((char) i);
+            }
+            fr.close();       
+            return re;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(HandlerFile.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(HandlerFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return re;
+    }    
     public Block[] getBlocks() {
         return blocks;
     }
